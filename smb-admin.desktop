@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.02
+Encoding=UTF-8
+Name=Smb-Admin
+GenericName=Smb-Admin	
+Exec=gksu -u root smb-admin
+Icon=smb-admin.png
+Terminal=false
+MultipleArgs=false
+Type=Application
+Categories=System;Application
+GenericName[en]=Smb-Admin
