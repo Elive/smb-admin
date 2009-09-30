@@ -37,7 +37,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="0.1.1"
+VERSION="0.1.2"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
@@ -60,13 +60,13 @@ else:
 	sys.stdin=open("/dev/null", 'r')
 START_MSG=None
 print os.popen("groups").readline()
-if "sambashare" in os.popen("groups").readline():
-	print "excellente"
-elif "root" in os.popen("groups").readline():
-	print "excellente"
+if os.access("/var/lib/samba/usershares",os.F_OK):
+	if os.access("/var/lib/samba/usershares",os.W_OK):
+		print "Access Granted"
+	else:
+		START_MSG_("Your admin needs to give you read/write access the directory '/var/lib/samba/usershares' in order for you to be able to create shares as user")
 else:
-	START_MSG=_("You are not a member of the group 'sambashare'. You are not allowed to use this program. Contact your administrator and beg him to let you in.")
-	print START_MSG
+	START_MSG=_("Your admin needs to create the directory '/var/lib/samba/usershares' and give you read/write access in order for you to be able to create shares as user")
 share_list=[]
 input,output,error_out=os.popen3("net usershare list")
 for line in output:
