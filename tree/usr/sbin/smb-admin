@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.04.7"
+VERSION="1.04.8"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -1141,13 +1141,13 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			self.psharetreeview.show()
 			self.print_hbbox.show()
 			self.print_box.set_sensitive(True)
-		def passdb_func():
+		def passdb_func(msg):
 			x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
 			x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
 			x.show_all()
 			response = x.run()
 			if response == gtk.RESPONSE_YES:
-				config["global"]["passdb backend"]="smbpasswd"
+				config["global"]["passdb backend"]="tdbsam"
 				self.save_config(self)
 				self.restart_server(self)
 			elif response== gtk.RESPONSE_NO:
@@ -1156,7 +1156,10 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		if pagenum==2:
 			self.users_box2.set_sensitive(True)
 			if "passdb backend" not in config["global"]:
-				passdb_func()
+				config["global"]["passdb backend"]="tdbsam"
+			elif config["global"]["passdb backend"].lower().strip() not in ["smbpasswd","tdbsam"]:
+				msg=_("Smb-Admin needs the passdb backend\nset to 'smbpasswd' or 'tdbsam' in order to manage users.\nDo you wish to change this to 'tdbsam', the default?")
+				passdb_func(msg)
 			#gui.updateusers(None)
 			udt=UDU_thread()
 			udt.setDaemon(1)
