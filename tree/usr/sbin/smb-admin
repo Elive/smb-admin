@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.04.8"
+VERSION="1.04.9"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -639,7 +639,10 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			errors_str=errors_str+line
 		if errors == []:
 			print "no errors, show output"
-			self.msgbox(output_str)#str(output).strip("\'[").strip("]\'").strip("\n"))
+			if "cannot locate unix account" in output_str.lower():
+				self.msgbox(output_str+_("Please create a system user for that username on this machine first."))
+			else:
+				self.msgbox(output_str)
 		else:
 			print "errors present, show errors"
 			self.msgbox(_("Error adding user")+" \'"+user+"\':\n"+errors_str)#str(errors).strip("\'[").strip("]\'").strip("\n"))
@@ -1158,7 +1161,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			if "passdb backend" not in config["global"]:
 				config["global"]["passdb backend"]="tdbsam"
 			elif config["global"]["passdb backend"].lower().strip() not in ["smbpasswd","tdbsam"]:
-				msg=_("Smb-Admin needs the passdb backend\nset to 'smbpasswd' or 'tdbsam' in order to manage users.\nDo you wish to change this to 'tdbsam', the default?")
+				msg=_("Smb-Admin needs the passdb backend set to 'smbpasswd' or 'tdbsam' in order to manage users. Do you wish to change this to 'tdbsam', the default?")
 				passdb_func(msg)
 			#gui.updateusers(None)
 			udt=UDU_thread()
