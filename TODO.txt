@@ -5,6 +5,8 @@
 
  * SAMBA Users ->  "Show Users With Unset Passwords", this means that they simply not works as "samba shared stuff", right ? mmh, what about change it by something like "show users disabled" ? (talking about the intuitiveness of the end-user, instead of the 'real internal work of the application'
 
+ * When Quit the application, if the configuration is not saved/restarted it ask to the user if want to do that
+
 
 -----------------------------------------
 Possible Redesign:
