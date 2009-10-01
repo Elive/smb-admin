@@ -64,7 +64,7 @@ if os.access("/var/lib/samba/usershares",os.F_OK):
 	if os.access("/var/lib/samba/usershares",os.W_OK):
 		print "Access Granted"
 	else:
-		START_MSG_("Your admin needs to give you read/write access the directory '/var/lib/samba/usershares' in order for you to be able to create shares as user")
+		START_MSG=_("Your admin needs to give you read/write access the directory '/var/lib/samba/usershares' in order for you to be able to create shares as user")
 else:
 	START_MSG=_("Your admin needs to create the directory '/var/lib/samba/usershares' and give you read/write access in order for you to be able to create shares as user")
 share_list=[]
