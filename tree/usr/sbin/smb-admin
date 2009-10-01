@@ -562,7 +562,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		if self.sh_entry.get_text().strip() =="homes":
 			self.local_entry.set_sensitive(False)
 			self.local_btn.set_sensitive(False)
-			self.share_info.set_text(_("Info: \"homes\" is a special setting that shares the home directory of each user."))
+			self.share_info.set_text(_("Info: 'homes' is a special setting that shares the home directory of each user."))
 
 		else:
 			self.share_info.set_text("")
@@ -996,7 +996,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				if config[share]["public"].lower() in ["true","yes"]:
 					run=True
 		if run==True:
-			msg=_("In order for a Windows client to access a share as guest, the \"map to guest\" option needs to be set. Do you wish to set it now?")
+			msg=_("In order for a Windows client to access a share as guest, the 'map to guest' option needs to be set. Do you wish to set it now?")
 			if "map to guest" not in config["global"]:
 				x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
 				x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
@@ -1107,7 +1107,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		self.pub_sel.set_active(False)
 	def tab_clicked(self,widget,x,pagenum):
 		def sub_func():
-			msg=_("Smb-Admin needs to set the \"printing\" and \"printcap name\" to \"cups\" to allow CUPS print sharing. Do you wish to do this?")
+			msg=_("Smb-Admin needs to set the 'printing' and 'printcap name' to 'cups' to allow CUPS print sharing. Do you wish to do this?")
 			x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
 			x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
 			x.show_all()

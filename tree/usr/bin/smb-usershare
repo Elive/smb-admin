@@ -378,7 +378,7 @@ class GUI(gtk.Window):
 			elif access_type =="Access:":
 				user_acl="Everyone:r"
 		if "Everyone" not in user_acl and public == "yes":
-			return self.msgbox(_("If you want to allow guest access, you must have a usershare_acl setting for \"Everyone.\" To add one, select an access mode from the drop down menu. This will remove the current usershare_acl settings for the share since a setting for 'Everyone' will over-ride any other settings."))
+			return self.msgbox(_("If you want to allow guest access, you must have a usershare_acl setting for 'Everyone.' To add one, select an access mode from the drop down menu. This will remove the current usershare_acl settings for the share since a setting for 'Everyone' will over-ride any other settings."))
 		command ="net usershare add \""+sharename+"\" \""+path+"\" \""+comment+"\" \""+user_acl+"\" guest_ok="+public
 		print command
 		input,out1,out2=os.popen3(command)
