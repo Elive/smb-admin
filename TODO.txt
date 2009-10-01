@@ -1,5 +1,23 @@
  * SAMBA Users -> Password Set ->  the default value is '0' when is not set, i suppose that this means "password not set", right ? what about change the 0 by the word "disabled" ? 
 
  * SAMBA Users ->  since the list is for "real users" (and not internal-system users), there's a lot of not-needed ones that the user should not select, the list should be started from the number of UID 1000 (all the real users created on teh system has an UID starting by 1000, so your first user is 1000, your second one is 1001, the next is 1002, etc). "if UID < 1000 ; then not show"
+   * UPDATE: it can start by the number 500, no problem, but should blacklist the match "nogroup" since has a UID number 65534
 
  * SAMBA Users ->  "Show Users With Unset Passwords", this means that they simply not works as "samba shared stuff", right ? mmh, what about change it by something like "show users disabled" ? (talking about the intuitiveness of the end-user, instead of the 'real internal work of the application'
+
+
+-----------------------------------------
+Possible Redesign:
+
+- shared folders tab: not very intuitive about "what is this for", i suggest "Shares Offered", this mades the user know directly what is this for only by reading it :)
+  - maybe add a small text on that window tab, before the list, saying something like "this is a list of the things that you are sharing, you can enable or disable them and change settings"
+
+- Server Settings: add a minimally-explaining tooltip at all the options
+
+- Samba Users: Add a text before the list explaining "what are these users" and "what are they for", and how it works
+  - I think that this section should be more intuitive, actually its hard for me to understand what are these users, so i think that are users of my system but i dont know why need to configure anything here if i can add my shared directories on the first tab (shared folders), and so if maybe these users are the remote ones allowed ? mmh, not easy to understand
+  - rename the "toggle status" to "enabled/disabled" or something like that ?
+  - change "Password Set" value for just "Yes" ? (and "No")
+  - when click on "Add" button, make a bit longer the description, saying "what is a samba user"
+
+- sharing cups printers: add a tooltip in the edit option of "Visible on clients" and "Open to the Public"
