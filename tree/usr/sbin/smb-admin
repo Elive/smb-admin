@@ -1277,6 +1277,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			elif data=="toggle":
 				file=os.popen("pdbedit -Lv -u "+username)
 				for line in file:
+					print line
 					if line.startswith(_("Account Flags")):
 						flags=line.split("[")[1].strip().strip("]").strip()
 						flags=flags.strip("TUMWSI")
