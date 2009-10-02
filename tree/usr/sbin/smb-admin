@@ -193,7 +193,7 @@ class GUI(gtk.Window):
 		self.usershare_max_shares_hbox.pack_start(self.usershare_max_shares_entry,False,True,32)
 		self.usershare_owner_only=gtk.CheckButton(_("Owners can only share their directories"))
 		self.usershare_owner_only.set_tooltip_text(_("If set, then only the directories owned by the sharing user can be shared."))
-		usershare_about_lbl=gtk.Label(_("Usershares are shares that the users can create, modify, and delete without being an administrator. They must be a member of the sambashare group. To disable them, set the max number of usershares to 0."))
+		usershare_about_lbl=gtk.Label(_("'Usershares' are shares that the users can create, modify, and delete without being an administrator. They must have read, write, and execute access to '/var/lib/samba/usershares/'. To disable 'usershares', set the max number of usershares to 0."))
 		usershare_about_lbl.set_line_wrap(True)
 		self.homes_sel= gtk.CheckButton(_("Share Home Directories"),True)
 		self.homes_sel.connect("clicked", self.homes_toggle)
@@ -364,12 +364,14 @@ class GUI(gtk.Window):
 		#self.show_allusers.connect("clicked", self.updateusers)
 		self.userlist = gtk.ListStore(int,str,str,str)
 		self.usertreeview = gtk.TreeView(self.userlist)
+		self.usertreeview.set_search_column(0)
 		self.usermodel = self.usertreeview.get_selection()
 		self.usermodel.set_mode(gtk.SELECTION_SINGLE)
 		self.userR = gtk.CellRendererText()
-		self.usertreeview.insert_column_with_attributes(0, _("Current Samba Users"), self.userR, text=1)
+		xy=self.usertreeview.insert_column_with_attributes(0, _("Current Samba Users"), self.userR, text=1)
 		self.usertreeview.insert_column_with_attributes(1, _("Status"), self.userR, text=2)
 		self.usertreeview.insert_column_with_attributes(2, _("Password Set"), self.userR, text=3)
+		xy.set_sort_column_id(1)
 		self.usertreeview.set_model(self.userlist)
 		self.usertreeview.set_search_column(0)
 		self.userscrolledwindow= gtk.ScrolledWindow()
@@ -445,7 +447,7 @@ class GUI(gtk.Window):
 		#self.notebook.set_tab_label_text(global_box,"General Server Settings")
 		self.notebook.set_tab_label(global_box,system_label)
 		self.notebook.insert_page(self.users_box2,tab_label=None,position=2)
-		self.notebook.set_tab_label_text(self.users_box2,"SAMBA Users")
+		self.notebook.set_tab_label_text(self.users_box2,"SAMBA "+_("Users"))
 		self.notebook.insert_page(self.print_box,tab_label=None,position=3)
 		self.notebook.set_tab_label_text(self.print_box,_("Sharing CUPS Printers"))
 		self.notebook.set_tab_label(self.print_box,printers_label)
@@ -870,7 +872,17 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		print "#####################"
 		print "reading configuration and applying settings"
 		if "netbios name" in config["global"]:
-			self.nb_name_entry.set_text(config["global"]["netbios name"])
+			if config["global"]["netbios name"].strip()=="":
+				print "you need a netbiosname"
+				hostnamecmd=subp.Popen("hostname",shell=True,stdout=subp.PIPE,stderr=subp.PIPE)
+				hostnm=hostnamecmd.stdout.readline().strip()
+				hostnamecmd.stderr.close()
+				hostnamecmd.stdout.close()
+				config["global"]["netbios name"]=hostnm
+				config.write()
+				self.nb_name_entry.set_text(hostnm)
+			else:
+				self.nb_name_entry.set_text(config["global"]["netbios name"])
 		if "workgroup" in config["global"]:
 			self.wg_entry.set_text(config["global"]["workgroup"])
 		if "server string" in config["global"]:
@@ -1376,7 +1388,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			if pw_set.strip() == "0":
 				if self.show_allusers.get_active()==True:
 					gtk.gdk.threads_enter()
-					iter = self.userlist.append( [y,user,STATUS,pw_set.strip()] )
+					iter = self.userlist.append( [y,user,STATUS,"Never"] )
 					gtk.gdk.threads_leave()
 					y=y+1
 			else:
