@@ -386,6 +386,7 @@ class GUI(gtk.Window):
 		userdel_btn.connect("clicked",self.user_func,"del")
 		usermod_btn.connect("clicked",self.user_func,"changepw")
 		usertog_btn.connect("clicked",self.user_func,"toggle")
+		self.unset_pw_info_lbl=gtk.Label(_("Users with passwords that have 'Never' been set, cannot login to SAMBA"))
 		
 		users_bbox=gtk.HButtonBox()
 		users_bbox.pack_start(useradd_btn,False,True,0)
@@ -395,6 +396,8 @@ class GUI(gtk.Window):
 		self.users_box2=gtk.VBox()
 		self.users_box2.pack_start(self.show_allusers,False,False,0)
 		self.users_box2.pack_start(self.userscrolledwindow,True,True,0)
+		self.users_box2.pack_start(self.unset_pw_info_lbl,False,False,0)
+		
 		#self.users_box2.pack_start(self.usertreeview,True,True,0)
 		self.users_box2.pack_end(users_bbox,False,True,0)
 		
@@ -486,6 +489,7 @@ class GUI(gtk.Window):
 		self.uname_entry2=gtk.Entry()
 		self.unpw2=gtk.Window()
 		self.addsharbox.hide()
+		self.unset_pw_info_lbl.hide()
 	def create_new_conf(self,widget):
 		global config
 		config=create_conf()
@@ -1365,6 +1369,12 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			else:
 				self.shall_prnt.set_active(False)
 	def updateusers(self,widget):
+		users_ids={}
+		passwd_file=open("/etc/passwd","r")
+		for line in passwd_file:
+			uname,uid=line.split(":")[0],line.split(":")[2]
+			users_ids[uname]=uid
+		passwd_file.close()
 		self.show_allusers.set_sensitive(False)
 		users=[]
 		gtk.gdk.threads_enter()
@@ -1387,10 +1397,12 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 					pw_set=line.split(":",1)[1]
 			if pw_set.strip() == "0":
 				if self.show_allusers.get_active()==True:
-					gtk.gdk.threads_enter()
-					iter = self.userlist.append( [y,user,STATUS,"Never"] )
-					gtk.gdk.threads_leave()
-					y=y+1
+					if int(users_ids[user])>=500 or int(users_ids[user]) ==0:
+						if user !="nobody":
+							gtk.gdk.threads_enter()
+							iter = self.userlist.append( [y,user,STATUS,"Never"] )
+							gtk.gdk.threads_leave()
+							y=y+1
 			else:
 				gtk.gdk.threads_enter()
 				iter = self.userlist.append( [y,user,STATUS,pw_set.strip()] )
@@ -1516,6 +1528,10 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 
 
 def udu_start(Nothing):
+	if gui.show_allusers.get_active()==False:
+		gui.unset_pw_info_lbl.hide()
+	else:
+		gui.unset_pw_info_lbl.show()
 	udt=UDU_thread()
 	udt.setDaemon(1)
 	udt.start()
