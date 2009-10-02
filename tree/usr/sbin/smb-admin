@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.04.9"
+VERSION="1.05"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -364,6 +364,7 @@ class GUI(gtk.Window):
 		#self.show_allusers.connect("clicked", self.updateusers)
 		self.userlist = gtk.ListStore(int,str,str,str)
 		self.usertreeview = gtk.TreeView(self.userlist)
+		self.usertreeview.connect("cursor-changed", self.toggle_enable_disable)
 		self.usertreeview.set_search_column(0)
 		self.usermodel = self.usertreeview.get_selection()
 		self.usermodel.set_mode(gtk.SELECTION_SINGLE)
@@ -379,20 +380,20 @@ class GUI(gtk.Window):
 		self.userscrolledwindow.set_policy(True, True)
 		
 		usermod_btn=gtk.Button(_("Change password"))
-		usertog_btn=gtk.Button(_("Toggle Status"))
+		self.usertog_btn=gtk.Button(_("Enable/Disable"))
 		useradd_btn=gtk.Button(stock=gtk.STOCK_ADD)
 		userdel_btn=gtk.Button(stock=gtk.STOCK_DELETE)
 		useradd_btn.connect("clicked",self.user_func,"add")
 		userdel_btn.connect("clicked",self.user_func,"del")
 		usermod_btn.connect("clicked",self.user_func,"changepw")
-		usertog_btn.connect("clicked",self.user_func,"toggle")
+		self.usertog_btn.connect("clicked",self.user_func,"toggle")
 		self.unset_pw_info_lbl=gtk.Label(_("Users with passwords that have 'Never' been set, cannot login to SAMBA"))
 		
 		users_bbox=gtk.HButtonBox()
 		users_bbox.pack_start(useradd_btn,False,True,0)
 		users_bbox.pack_start(userdel_btn,False,True,0)
 		users_bbox.pack_start(usermod_btn,False,True,0)
-		users_bbox.pack_start(usertog_btn,False,True,0)
+		users_bbox.pack_start(self.usertog_btn,False,True,0)
 		self.users_box2=gtk.VBox()
 		self.users_box2.pack_start(self.show_allusers,False,False,0)
 		self.users_box2.pack_start(self.userscrolledwindow,True,True,0)
@@ -490,6 +491,7 @@ class GUI(gtk.Window):
 		self.unpw2=gtk.Window()
 		self.addsharbox.hide()
 		self.unset_pw_info_lbl.hide()
+		self.usertog_btn.hide()
 	def create_new_conf(self,widget):
 		global config
 		config=create_conf()
@@ -1203,6 +1205,34 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 					self.shall_prnt.set_active(False)
 			print "updateing"
 			self.update_printers()
+	def toggle_enable_disable(self,widget):
+		s = self.usertreeview.get_selection()
+		(ls, iter) = s.get_selected()
+		if iter is None:
+			print "nothing selected"
+		else:
+			user=ls.get_value(iter,1)
+			STATUS=""
+			pdbeditcmd=subp.Popen("pdbedit -Lv -u "+user,shell=True,stdout=subp.PIPE)
+#			info=os.popen("pdbedit -Lv -u "+user)
+			for line in pdbeditcmd.stdout.readlines():
+#				print line
+				if "Flags" in line:
+					print "found flags"
+					line2=line.split("[")[1].strip().strip("]").strip()
+					STATUS=""
+					if "D" in line2:
+						print "setting disabled"
+						STATUS="Disabled"
+					else:
+						print "setting enabled"
+						STATUS="Enabled"
+			pdbeditcmd.stdout.close()
+			if STATUS=="Enabled":
+				self.usertog_btn.get_children()[0].set_text(_("Disable"))
+			else:
+				self.usertog_btn.get_children()[0].set_text(_("Enable"))
+			self.usertog_btn.show()
 	def toggle_printer(self,widget):
 		s = self.prntsharetreeview.get_selection()
 		(ls, iter) = s.get_selected()
