@@ -9,5 +9,3 @@ Possible Redesign:
 
 - Samba Users: 
   - change "Password Set" value for just "Yes" ? (and "No")
-
-- sharing cups printers: add a tooltip in the edit option of "Visible on clients" and "Open to the Public"

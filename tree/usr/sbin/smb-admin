@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.06"
+VERSION="1.07"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -246,16 +246,17 @@ class GUI(gtk.Window):
 		self.local_btn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Browse"))
 		self.local_btn.connect("clicked", self.folder_sel)
 		self.browseable_sel= gtk.CheckButton(_("Visible on clients"),True)
+		self.browseable_sel.set_tooltip_text(_("Check this if you want the share to be listed when clients request the share list from the server. Otherwise, it will be availabe but it will not be seen."))
 		self.write_sel= gtk.CheckButton(_("Writeable"),True)
 		self.avail_sel= gtk.CheckButton(_("Enabled"),True)
 		self.follow_sel=gtk.CheckButton(_("Follow symlinks"),False)
 		self.pub_sel= gtk.CheckButton(_("Open to the Public"),False)
+		self.pub_sel.set_tooltip_text(_("This allows guests (non Samba users) to access the shared folder."))
 		self.pub_sel.connect("clicked",self.public_share)
 		valuser_lbl=gtk.Label(_("Valid Users (optional)"))
 		self.share_info=gtk.Label("")
 		self.valuser_entry=gtk.Entry()
-		self.valuser_entry.set_tooltip_text(_("Separate usernames with a comma"))
-		
+		self.valuser_entry.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate usernames with a comma."))
 		self.sharelist = gtk.ListStore(int,str,str,str,str,str,str,str)
 		self.sharetreeview = gtk.TreeView(self.sharelist)
 		
@@ -804,6 +805,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			self.pr_comment=gtk.Entry()
 			#self.pr_comment.
 			self.pr_users=gtk.Entry()
+			self.pr_users.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Comma separated values."))
 			self.sep_lbl.hide()
 			self.psharetreeview.hide()
 			self.print_hbbox.hide()
@@ -817,8 +819,10 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			ok_btn.connect("clicked",self.mod_pr_cmd)
 						
 			self.pbrowseable_sel= gtk.CheckButton(_("Visible on clients"),True)
+			self.pbrowseable_sel.set_tooltip_text(_("Check this if you want the print share listed when clients request the share list from the server. Otherwise, it will be availabe but it will not be seen"))
 			self.pavail_sel= gtk.CheckButton(_("Enabled"),True)
 			self.ppub_sel= gtk.CheckButton(_("Open to the Public"),False)
+			self.ppub_sel.set_tooltip_text(_("This allows guests (non Samba users) to access the print share."))
 			self.ppub_sel.connect("clicked", self.public_pr)
 			pvaluser_lbl=gtk.Label(_("Valid Users (optional)"))
 			self.pr_lbl=gtk.Label(_("Settings for ")+printername)
