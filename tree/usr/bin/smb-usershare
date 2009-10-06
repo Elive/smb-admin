@@ -31,13 +31,13 @@
 #
 import pygtk
 pygtk.require('2.0')
-import configobj,gtk,popen2,os,time,sys,gettext
+import configobj,gtk,popen2,os,time,sys,gettext,subprocess
 APP = 'smb-usershare'
 DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="0.1.3"
+VERSION="0.1.4"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
@@ -59,22 +59,26 @@ else:
 	sys.stdout=open("/dev/null", 'w')
 	sys.stdin=open("/dev/null", 'r')
 START_MSG=None
+usr_sh_dir="/var/lib/samba/usershares"
 if os.access("/var/lib/samba/usershares",os.F_OK):
-	if os.access("/var/lib/samba/usershares",os.X_OK):
-		print "NO ACCESS"
+	if os.access(usr_sh_dir,os.X_OK) and os.access(usr_sh_dir,os.W_OK) and os.access(usr_sh_dir,os.R_OK):
+		print "RWX ACCESS"
 	else:
 		START_MSG=_("Your admin needs to give you read, write, and execute access to the directory '/var/lib/samba/usershares' in order for you to be able to create shares as user.")
 else:
 	START_MSG=_("Your admin needs to create the directory '/var/lib/samba/usershares' and give you read, write, and execute access in order for you to be able to create shares as user.")
 share_list=[]
-input,output,error_out=os.popen3("net usershare list")
+netusl=subprocess.Popen("net usershare list",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+output=netusl.stdout.readlines()
+netusl.stdout.close()
+error_out=netusl.stderr.readlines()
+netusl.stderr.close()
 for line in output:
 	share_list.append(line.strip())
 for line in error_out:
 	if "net usershare: usershares are currently disabled" in line:
 		print "Usershare disabled"
-		START_MSG=line+"\n"+_("Ask your administrator to set 'usershare max shares' in the 'global' section of smb.conf to a value greater than 0")
-		
+		START_MSG=line+"\n"+_("Ask your administrator to set 'usershare max shares' in the 'global' section of smb.conf to a value greater than 0")		
 #		sys.exit()
 class GUI(gtk.Window):
 	def __init__(self):
@@ -319,11 +323,9 @@ class GUI(gtk.Window):
 		state=[]
 		if self.show_all_shares.get_active()==True:
 			print "ACTIVE"
-			#share_list=os.popen("net usershare list -l").readlines()
 			COMMAND="net usershare -l"
 		else:
 			print "FALSE"
-			#share_list=os.popen("net usershare list").readlines()
 			COMMAND="net usershare "
 
 		global ORIGINAL_SHARE
@@ -348,7 +350,7 @@ class GUI(gtk.Window):
 			#the user has predefined usershare_acl settings which we dont 
 			#want to change unless they do
 			#the following will obtain the current usershare_acl setting for sharename
-			info=os.popen(COMMAND+" info "+sharename)
+			info=subprocess.Popen(COMMAND+" info "+sharename,shell=True,stdout=subprocess.PIPE).stdout.readlines()
 			for line in info:
 				if line.startswith("usershare_acl"):
 					user_acl=line.split("=")[1].strip().lower().strip(",")
@@ -380,20 +382,21 @@ class GUI(gtk.Window):
 			return self.msgbox(_("If you want to allow guest access, you must have a usershare_acl setting for 'Everyone.' To add one, select an access mode from the drop down menu. This will remove the current usershare_acl settings for the share since a setting for 'Everyone' will over-ride any other settings."))
 		command ="net usershare add \""+sharename+"\" \""+path+"\" \""+comment+"\" \""+user_acl+"\" guest_ok="+public
 		print command
-		input,out1,out2=os.popen3(command)
-		output=out2.readlines()
-		if output==[]:
+		netuscmd=subprocess.Popen(command,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		output=netuscmd.stdout.readlines()
+		error=netuscmd.stderr.readlines()
+		if netuscmd.wait()==0:
 			print "share added"
-			self.msgbox(_("Share Added"))
+			self.msgbox(_("Share added successfuly."))
 		else:
 			print "else"
 			msg=""
-			out2.read
+#			out2.read
 			for x in output:
 				print x
 				msg=msg+x
 #				print msg
-			for x in out1.readlines():
+			for x in error:
 				print x
 				msg=msg+x
 #				print msg
@@ -433,23 +436,21 @@ class GUI(gtk.Window):
 		else:
 			sharename=ls.get_value(iter, 1)
 		if sharename !="":
-			input,out1,out2=os.popen3("net usershare delete "+sharename)
-			output=out2.readlines()
-			if output==[]:
+			useshardel=subprocess.Popen("net usershare delete "+sharename,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			output=useshardel.stdout.readlines()
+			error=useshardel.stderr.readlines()
+			if useshardel.wait()==0:
 				print "share deleted"
-				self.msgbox(_("Share Deleted"))
+				self.msgbox(_("Shared folder successfully deleted"))
 			else:
 				print "else"
 				msg=""
-				out2.read
 				for x in output:
 					print x
 					msg=msg+x
-	#				print msg
-				for x in out1.readlines():
+				for x in error:
 					print x
 					msg=msg+x
-	#				print msg
 				self.msgbox(msg)
 			self.share_clear("worthless data")
 		gui.updateshare(None)
@@ -482,7 +483,7 @@ class GUI(gtk.Window):
 			sharename=ls.get_value(iter, 1)
 		print sharename
 		self.sh_entry.set_text(sharename)
-		config=configobj.ConfigObj(os.popen("net usershare  info "+sharename))
+		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+sharename,shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		self.local_entry.set_text(config[sharename]["path"])
 		self.comment_entry.set_text(config[sharename]["comment"])
 		if config[sharename]["guest_ok"] == "y":
@@ -544,21 +545,19 @@ class GUI(gtk.Window):
 		path=[]
 		if self.show_all_shares.get_active()==True:
 			print "ACTIVE"
-			#share_list=os.popen("net usershare list -l").readlines()
 			COMMAND="net usershare -l"
 			self.mod_btn.set_sensitive(False)
 		else:
 			print "FALSE"
-			#share_list=os.popen("net usershare list").readlines()
 			COMMAND="net usershare "
 			self.mod_btn.set_sensitive(True)
-		share_list=os.popen(COMMAND+" list").readlines()
+		share_list=subprocess.Popen(COMMAND+" list",shell=True,stdout=subprocess.PIPE).stdout.readlines()
 		print share_list
 		print "FOR LOOP NEXT"
 		for share in share_list:
 			print share
 			share=share.strip()
-			info_conf=configobj.ConfigObj(os.popen(COMMAND+" info "+share))
+			info_conf=configobj.ConfigObj(subprocess.Popen(COMMAND+" info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
 			comments.append(info_conf[share]["comment"])
 			path.append(info_conf[share]["path"])
 			iter = self.sharelist.append( [z,share,comments[z],path[z]])#comment[z],readonly[z],public[z],path[z]] )
