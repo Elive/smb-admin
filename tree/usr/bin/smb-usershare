@@ -31,7 +31,7 @@
 #
 import pygtk
 pygtk.require('2.0')
-import configobj,gtk,popen2,os,time,sys,gettext,subprocess
+import configobj,gtk,os,time,sys,gettext,subprocess
 APP = 'smb-usershare'
 DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
@@ -391,15 +391,12 @@ class GUI(gtk.Window):
 		else:
 			print "else"
 			msg=""
-#			out2.read
 			for x in output:
 				print x
 				msg=msg+x
-#				print msg
 			for x in error:
 				print x
 				msg=msg+x
-#				print msg
 			self.msgbox(msg)
 		self.share_clear(None)
 		self.add_share_deactivate(None)
@@ -409,21 +406,27 @@ class GUI(gtk.Window):
 		new_pw=self.new_pw_entry.get_text()
 		confirm_pw=self.confirm_pw_entry.get_text()
 		if confirm_pw.strip()==new_pw.strip():
-			output,input=popen2.popen4("smbpasswd -s ")
+			smbpasscmd=subprocess.Popen("smbpasswd -s",shell=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			input=smbpasscmd.stdin
 			if os.environ.get('USER')!="root":
 				input.write(old_pw+"\n")
 			input.write(new_pw+"\n")
 			input.write(confirm_pw+"\n")
-			status=input.close()
-			result=output.read()
-			if status is None:
-				output.close()
-				self.msgbox(result)
+			output=smbpasscmd.stdout.readlines()
+			error=smbpasscmd.stderr.readlines()
+			if smbpasscmd.wait()==0:
+				self.msgbox(output)
 			else:
-				output.close()
-				self.msgbox("printing",status,result)
+				msg=''
+				for x in output:
+					msg=msg+x
+				for x in error:
+					msg=msg+x
+				if "password restriction" in msg.lower() and len(new_pw)<5:
+					msg=msg+"\n"+_("Try a password with more than 5 Characters")
+				self.msgbox(msg)
 		else:
-			self.msgbox(_("The passwords dont match."))
+			self.msgbox(_("The passwords do not match."))
 
 	def delete_event( widget, event=None, data=None):
 		gtk.main_quit()
