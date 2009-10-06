@@ -64,7 +64,7 @@ def create_conf():
 	config["global"]["server string"]="%h server"
 	config["global"]["passdb backend"]="tdbsam"
 	config["global"]["local master"]="yes"
-	config["global"]["preferred master"]="no"
+	#~ config["global"]["preferred master"]="no"
 	config["global"]["wins support"]="no"
 	config["global"]["load printers"]="yes"
 	config["homes"]={}
@@ -367,8 +367,10 @@ class GUI(gtk.Window):
 		self.sharbox_list.pack_end(shar_bbox,False,True,0)
 		##End Interior share layout##
 		##Users Interior layout##
+		self.users_lbl=gtk.Label(_("Samba users (and guests if enabled) are the only ones allowed to login to the Samba server. System users can not login without first being added to the Samba user list. Only pre-existing system users can be added as Samba users."))
+		self.users_lbl.set_line_wrap(True)
 		self.show_allusers=gtk.CheckButton(_("Show Users With Unset Passwords"),True)
-		self.show_allusers.set_tooltip_text(_("Users with unset passwords can NOT log into the server"))
+		self.show_allusers.set_tooltip_text(_("Users with unset passwords can NOT login to the server"))
 		self.show_allusers.connect("clicked", udu_start)
 		#self.show_allusers.connect("clicked", self.updateusers)
 		self.userlist = gtk.ListStore(int,str,str,str)
@@ -380,7 +382,7 @@ class GUI(gtk.Window):
 		self.userR = gtk.CellRendererText()
 		xy=self.usertreeview.insert_column_with_attributes(0, _("Current Samba Users"), self.userR, text=1)
 		self.usertreeview.insert_column_with_attributes(1, _("Status"), self.userR, text=2)
-		self.usertreeview.insert_column_with_attributes(2, _("Password Set"), self.userR, text=3)
+		self.usertreeview.insert_column_with_attributes(2, _("Password Last Set"), self.userR, text=3)
 		xy.set_sort_column_id(1)
 		self.usertreeview.set_model(self.userlist)
 		self.usertreeview.set_search_column(0)
@@ -404,6 +406,7 @@ class GUI(gtk.Window):
 		users_bbox.pack_start(usermod_btn,False,True,0)
 		users_bbox.pack_start(self.usertog_btn,False,True,0)
 		self.users_box2=gtk.VBox()
+		self.users_box2.pack_start(self.users_lbl,False,False,0)
 		self.users_box2.pack_start(self.show_allusers,False,False,0)
 		self.users_box2.pack_start(self.userscrolledwindow,True,True,0)
 		self.users_box2.pack_start(self.unset_pw_info_lbl,False,False,0)
@@ -493,6 +496,8 @@ class GUI(gtk.Window):
 		self.set_title(_("Smb-Admin"))
 		self.connect("delete_event", self.delete_event)
 		self.add(vbox)
+		self.set_has_frame(True)
+		self.set_frame_dimensions(4,2,4,2)
 		self.show_all()
 		self.pw_entry2=gtk.Entry()
 		self.pw_entry3=gtk.Entry()
@@ -643,6 +648,8 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		pw1=self.pw_entry2.get_text()
 		pw2=self.pw_entry3.get_text()
 		user=self.uname_entry2.get_text().strip()
+		if user=="":
+			return
 		pdb=subp.Popen("pdbedit -t -a "+user,shell=True,stdin=subp.PIPE,stdout=subp.PIPE,stderr=subp.PIPE)
 		pdb.stdin.write(pw1+"\n")
 		pdb.stdin.write(pw2+"\n")
@@ -691,23 +698,23 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 
 		self.unpw2.destroy()
 	def delete_event( widget, event=None, data=None):
-		if compare_conf== config:
-			gtk.main_quit()
-			return False
-		else: 
-		#def sub_func():
-			msg=_("Changes have been made. Would you like to save before restarting the server?")
-			x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
-			x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
-			x.show_all()
-			response = x.run()
-			if response == gtk.RESPONSE_YES:
-				self.save_config(None)
-				restart()
-			elif response== gtk.RESPONSE_NO:
-				restart()
-			x.destroy()
-			print "configuration has changed. Would you like to save it first?"
+		#~ if compare_conf== config:
+			#~ gtk.main_quit()
+			#~ return False
+		#~ else: 
+		#~ #def sub_func():
+			#~ msg=_("Changes have been made. Would you like to save before restarting the server?")
+			#~ x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
+			#~ x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
+			#~ x.show_all()
+			#~ response = x.run()
+			#~ if response == gtk.RESPONSE_YES:
+				#~ self.save_config(None)
+				#~ restart()
+			#~ elif response== gtk.RESPONSE_NO:
+				#~ restart()
+			#~ x.destroy()
+			#~ print "configuration has changed. Would you like to save it first?"
 			gtk.main_quit()
 			return False
 	def del_share(self,widget):
@@ -1313,6 +1320,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		unamelbl2=gtk.Label(_("User Name"))
 		ok2=gtk.Button(stock=gtk.STOCK_OK)
 		info_label=gtk.Label(MSG)
+		info_label.set_line_wrap(True)
 		self.pw_entry2.set_visibility(False)
 		self.pw_entry3.set_visibility(False)
 		self.pw_entry2.set_invisible_char("*") 
@@ -1394,7 +1402,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			udt.setDaemon(1)
 			udt.start()
 		if data=="add":
-			return self.unamepw(data,_("To add a samba user, please enter the following:"))
+			return self.unamepw(data,_("Note: To add a user to the Samba user list, the username must have a pre-existing system account. Please enter the following:"))
 			udt=UDU_thread()
 			udt.setDaemon(1)
 			udt.start()

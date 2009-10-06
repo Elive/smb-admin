@@ -4,15 +4,10 @@
 -----------------------------------------
 Possible Redesign:
 
-- shared folders tab: not very intuitive about "what is this for", i suggest "Shares Offered", this mades the user know directly what is this for only by reading it :)
+- Shared Folders
   - maybe add a small text on that window tab, before the list, saying something like "this is a list of the things that you are sharing, you can enable or disable them and change settings"
 
-- Server Settings: add a minimally-explaining tooltip at all the options
-
-- Samba Users: Add a text before the list explaining "what are these users" and "what are they for", and how it works
-  - I think that this section should be more intuitive, actually its hard for me to understand what are these users, so i think that are users of my system but i dont know why need to configure anything here if i can add my shared directories on the first tab (shared folders), and so if maybe these users are the remote ones allowed ? mmh, not easy to understand
-  - rename the "toggle status" to "enabled/disabled" or something like that ?
+- Samba Users: 
   - change "Password Set" value for just "Yes" ? (and "No")
-  - when click on "Add" button, make a bit longer the description, saying "what is a samba user"
 
 - sharing cups printers: add a tooltip in the edit option of "Visible on clients" and "Open to the Public"
