@@ -1494,7 +1494,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 							y=y+1
 			else:
 				gtk.gdk.threads_enter()
-				iter = self.userlist.append( [y,user,STATUS,pw_set.strip()] )
+				iter = self.userlist.append( [y,user,STATUS,_("Yes")] )
 				gtk.gdk.threads_leave()
 				y=y+1
 		self.show_allusers.set_sensitive(True)
