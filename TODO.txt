@@ -1,11 +1,1 @@
- * When Quit the application, if the configuration is not saved/restarted it ask to the user if want to do that
-
-
------------------------------------------
-Possible Redesign:
-
-- Shared Folders
-  - maybe add a small text on that window tab, before the list, saying something like "this is a list of the things that you are sharing, you can enable or disable them and change settings"
-
-- Samba Users: 
-  - change "Password Set" value for just "Yes" ? (and "No")
+ * When Quit the application, if the configuration is not saved/restarted it ask to the user if want to do that.

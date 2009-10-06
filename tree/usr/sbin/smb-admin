@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.07"
+VERSION="1.08"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -205,6 +205,8 @@ class GUI(gtk.Window):
 		usershare_about_lbl.set_line_wrap(True)
 		self.homes_sel= gtk.CheckButton(_("Share Home Directories"),True)
 		self.homes_sel.connect("clicked", self.homes_toggle)
+		self.what_are_shares_lbl=gtk.Label(_("This is a list of the folders that you are sharing, you can add, remove and edit them below."))
+		self.what_are_shares_lbl.set_line_wrap(True)
 		
 		restorebtn=gtk.Button(stock=gtk.STOCK_REVERT_TO_SAVED)#"Restore Config"
 		restorebtn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Restore Config"))
@@ -308,7 +310,12 @@ class GUI(gtk.Window):
 		del_btn.connect("clicked",self.del_share)
 		mod_btn=gtk.Button(stock=gtk.STOCK_EDIT)
 		mod_btn.connect("clicked",self.activate_share_sel)
-
+		view_usershares=gtk.Button(_("View Usershares"))
+		usIMAGE=gtk.Image()
+		usIMAGE.set_from_icon_name("gnome-fs-smb",4)
+		view_usershares.set_image(usIMAGE)
+		view_usershares.connect("clicked",self.launch_smbusershare)
+		
 		self.prntbtn=gtk.Button(_("Add to Shared Printers"))
 		self.prntbtn.connect("clicked",self.toggle_printer)
 		self.prntsharelist = gtk.ListStore(int,str,str)#,str)
@@ -323,10 +330,11 @@ class GUI(gtk.Window):
 		self.prntsharetreeview.insert_column_with_attributes(1, _("Shared by Samba"), self.shareR, text=2)
 		#self.prntsharetreeview.insert_column_with_attributes(2, "Shared by CUPS", self.shareR, text=3)
 
-		shar_bbox=gtk.HButtonBox()
-		shar_bbox.pack_start(add_btn2,False,True,0)
-		shar_bbox.pack_start(mod_btn,False,True,0)
-		shar_bbox.pack_start(del_btn,False,True,0)
+		shar_bbox=gtk.HBox()
+		shar_bbox.pack_start(add_btn2,False,False,10)
+		shar_bbox.pack_start(mod_btn,False,False,10)
+		shar_bbox.pack_end(view_usershares,False,False,10)
+		shar_bbox.pack_start(del_btn,False,False,10)
 		
 		comment_box=gtk.HBox()
 		comment_box.pack_start(comment_lbl,False,False,2)
@@ -364,6 +372,7 @@ class GUI(gtk.Window):
 			##right side##
 		#self.sharbox_list.pack_start(self.sharetreeview,True,True,0)
 		self.sharbox_list.pack_start(self.homes_sel,False,True,1)
+		self.sharbox_list.pack_start(self.what_are_shares_lbl,False,True,0)
 		self.sharbox_list.pack_start(self.sharescrolledwindow,True,True,0)
 		self.sharbox_list.pack_end(shar_bbox,False,True,0)
 		##End Interior share layout##
@@ -383,7 +392,7 @@ class GUI(gtk.Window):
 		self.userR = gtk.CellRendererText()
 		xy=self.usertreeview.insert_column_with_attributes(0, _("Current Samba Users"), self.userR, text=1)
 		self.usertreeview.insert_column_with_attributes(1, _("Status"), self.userR, text=2)
-		self.usertreeview.insert_column_with_attributes(2, _("Password Last Set"), self.userR, text=3)
+		self.usertreeview.insert_column_with_attributes(2, _("Password Set"), self.userR, text=3)
 		xy.set_sort_column_id(1)
 		self.usertreeview.set_model(self.userlist)
 		self.usertreeview.set_search_column(0)
@@ -480,6 +489,8 @@ class GUI(gtk.Window):
 		savebtn.connect("clicked",self.save_config)
 		restrtbtn=gtk.Button(stock="gtk-refresh")
 		restrtbtn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Restart Server"))
+		print restrtbtn.get_children()[0].get_children()[0].get_children()[1]
+#		sys.exit()
 		restrtbtn.connect("clicked",self.restart_server)
 		about=gtk.Button(stock=gtk.STOCK_ABOUT)#"About")
 		about.connect("clicked",self.abtfunc)
@@ -762,6 +773,8 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		self.vbox_pr.hide()
 	def kill(self,widget):
 		self.unpw2.hide()
+	def launch_smbusershare(self,button):
+		smbus=subp.Popen("smb-usershare",shell=True)
 	def load(self,printername):
 		self.pr_comment.set_text(config[printername]["comment"])
 		if "valid users" in config[printername]:
@@ -1489,7 +1502,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 					if int(users_ids[user])>=500 or int(users_ids[user]) ==0:
 						if user !="nobody":
 							gtk.gdk.threads_enter()
-							iter = self.userlist.append( [y,user,STATUS,"Never"] )
+							iter = self.userlist.append( [y,user,STATUS,_("No")] )
 							gtk.gdk.threads_leave()
 							y=y+1
 			else:
