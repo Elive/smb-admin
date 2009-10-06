@@ -59,7 +59,6 @@ else:
 	sys.stdout=open("/dev/null", 'w')
 	sys.stdin=open("/dev/null", 'r')
 START_MSG=None
-print os.popen("groups").readline()
 if os.access("/var/lib/samba/usershares",os.F_OK):
 	if os.access("/var/lib/samba/usershares",os.X_OK):
 		print "NO ACCESS"

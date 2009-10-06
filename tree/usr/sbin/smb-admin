@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.05"
+VERSION="1.06"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -141,37 +141,45 @@ class GUI(gtk.Window):
 		wg_box=gtk.HBox()
 		wg_lbl=gtk.Label(_("Workgroup"))
 		self.wg_entry=gtk.Entry()
+		self.wg_entry.set_tooltip_text(_("This controls the 'workgroup' your server will appear to be in when queried by clients"))
 		wg_box.pack_start(wg_lbl,False,True,2)
 		wg_box.pack_start(self.wg_entry,False,True,73)
 		
 		serverstr_box=gtk.HBox()
 		serverstr_lbl=gtk.Label(_("Sever String"))
 		self.serverstr_entry=gtk.Entry()
+		self.serverstr_entry.set_tooltip_text(_("This option specifies the string that you wish to show to your users in the printer comment box in print manager, or to the IPC connection in the net view command under Windows machines. You can use %h for 'hostname' or %v for the samba version number."))
 		serverstr_box.pack_start(serverstr_lbl,False,True,2)
 		serverstr_box.pack_start(self.serverstr_entry,False,True,65)
 		
 		nb_name_box=gtk.HBox()
 		nb_name_lbl=gtk.Label(_("NetBios Name"))
 		self.nb_name_entry=gtk.Entry()
+		self.nb_name_entry.set_tooltip_text(_("This sets the name by which the Samba server is known."))
 		nb_name_box.pack_start(nb_name_lbl,False,True,2)
 		nb_name_box.pack_start(self.nb_name_entry,False,True,51)
 		
 		
-		self.prefmb_sel=gtk.CheckButton(_("Preferred Master Browser(one per network)"), False)
-		self.prefmb_sel.connect("clicked", self.prefmb_func)
+#		self.prefmb_sel=gtk.CheckButton(_("Preferred Master Browser(one per network)"), False)
+#		self.prefmb_sel.connect("clicked", self.prefmb_func)
 		self.localmb_sel= gtk.CheckButton(_("Local Master Browser"),True)
+		self.localmb_sel.set_tooltip_text(_("When checked 'nmbd' will try to become the 'local master browser' on a subnet. If unchecked, 'nmbd' will Never become the 'local master browser.' A Master browser holds a 'Browse List' for the LAN by collecting service announcements. Default is checked."))
 		self.localmb_sel.connect("clicked", self.localmb_func)
 		
 		oslvl_box=gtk.HBox()
 		oslvl_lbl=gtk.Label(_("OS Level"))
 		self.oslvl_entry=gtk.Entry()
+		self.oslvl_entry.set_tooltip_text(_("The OS Level controls what level Samba advertises itself as for browser  elections. It determines whether 'nmbd' has a chance of becoming a 'local master browser.' Default is 20 which will win elections against all Microsoft operating systems except Windows NT 4.0/2000 Domain Controller."))
 		self.oslvl_entry.set_width_chars (8)
 		oslvl_box.pack_start(oslvl_lbl,False,True,2)
 		oslvl_box.pack_start(self.oslvl_entry,False,True,90)
 	
 		self.winserv_sel=gtk.RadioButton(None,_("Do not act as WINS server"))
+		self.winserv_sel.set_tooltip_text(_("If you do not know what a WINS server is, check this option."))
 		self.winserv_sel2=gtk.RadioButton(self.winserv_sel,_("Act as WINS server"))
+		self.winserv_sel2.set_tooltip_text(_("If you do not know what a WINS server is, check the first option."))
 		self.winserv_sel3=gtk.RadioButton(self.winserv_sel,_("Use WINS server"))
+		self.winserv_sel3.set_tooltip_text(_("If you do not know what a WINS server is, check the first option."))
 		self.winserv_entry=gtk.Entry()
 		winserv_box=gtk.HBox()
 		winserv_box.pack_start(self.winserv_sel3,False,True,2)
@@ -205,6 +213,7 @@ class GUI(gtk.Window):
 		newbtn=gtk.Button(stock=gtk.STOCK_NEW)
 		newbtn.connect("clicked",self.create_new_conf)
 		newbtn.get_children()[0].get_children()[0].get_children()[1].set_label(_("New Configuration"))
+		newbtn.set_tooltip_text(_("Create a new Default configuration"))
 		
 		configbbox=gtk.HButtonBox()
 		configbbox.pack_start(newbtn,False,True,1)
@@ -213,7 +222,7 @@ class GUI(gtk.Window):
 		global_box.pack_start(wg_box,False,True,1)
 		global_box.pack_start(serverstr_box,False,True,1)
 		global_box.pack_start(nb_name_box,False,True,1)
-		global_box.pack_start(self.prefmb_sel,False,True,1)
+#		global_box.pack_start(self.prefmb_sel,False,True,1)
 		global_box.pack_start(self.localmb_sel,False,True,1)
 		global_box.pack_start(oslvl_box,False,True,1)
 		global_box.pack_start(self.winserv_sel,False,True,1)
@@ -682,8 +691,25 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 
 		self.unpw2.destroy()
 	def delete_event( widget, event=None, data=None):
-		gtk.main_quit()
-		return False
+		if compare_conf== config:
+			gtk.main_quit()
+			return False
+		else: 
+		#def sub_func():
+			msg=_("Changes have been made. Would you like to save before restarting the server?")
+			x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
+			x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
+			x.show_all()
+			response = x.run()
+			if response == gtk.RESPONSE_YES:
+				self.save_config(None)
+				restart()
+			elif response== gtk.RESPONSE_NO:
+				restart()
+			x.destroy()
+			print "configuration has changed. Would you like to save it first?"
+			gtk.main_quit()
+			return False
 	def del_share(self,widget):
 		s = self.sharetreeview.get_selection()
 		(ls, iter) = s.get_selected()	
@@ -856,11 +882,11 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		popup.run()
 		popup.destroy()
 		return True
-	def prefmb_func(self,widget):
-		if self.prefmb_sel.get_active()==True:
-			config["global"]["preferred master"]="yes"
-		elif self.prefmb_sel.get_active()==False:
-			config["global"]["preferred master"]="no"
+	#~ def prefmb_func(self,widget):
+		#~ if self.prefmb_sel.get_active()==True:
+			#~ config["global"]["preferred master"]="yes"
+		#~ elif self.prefmb_sel.get_active()==False:
+			#~ config["global"]["preferred master"]="no"
 	def public_share(self,widget):
 		if self.pub_sel.get_active() == True:
 			self.valuser_entry.set_sensitive(False)
@@ -893,16 +919,18 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			self.wg_entry.set_text(config["global"]["workgroup"])
 		if "server string" in config["global"]:
 			self.serverstr_entry.set_text( str(config['global']['server string']).strip("['").strip("']"))
-		if "preferred master" in config["global"]:
-			if config["global"]["preferred master"].lower() in ["true","yes"]:
-				self.prefmb_sel.set_active(True)
-			elif config["global"]["preferred master"].lower() in ["false","no"]:
-				self.prefmb_sel.set_active(False)
+		#~ if "preferred master" in config["global"]:
+			#~ if config["global"]["preferred master"].lower() in ["true","yes"]:
+				#~ self.prefmb_sel.set_active(True)
+			#~ elif config["global"]["preferred master"].lower() in ["false","no"]:
+				#~ self.prefmb_sel.set_active(False)
 		if "local master" in config["global"]:
 			if config["global"]["local master"].lower() in ["true","yes"]:
 				self.localmb_sel.set_active(True)
 			elif config["global"]["local master"].lower() in ["false","no"]:
 				self.localmb_sel.set_active(False)
+		else:
+			self.localmb_sel.set_active(True)
 		if "usershare allow guests" in config["global"]:
 			print "allow guests ="+config["global"]["usershare allow guests"].lower()
 			if config["global"]["usershare allow guests"].lower() in ["true","yes"]:
@@ -919,12 +947,19 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		else:
 			self.usershare_owner_only.set_active(False)
 		if "usershare max shares" in config["global"]:
-			if config["global"]["usershare max shares"]:
+			if config["global"]["usershare max shares"].strip() !="":
 				self.usershare_max_shares_entry.set_text(config["global"]["usershare max shares"])
+			else:
+				self.usershare_max_shares_entry.set_text("0")
 		else:
-			self.usershare_max_shares_entry.set_text("100")
+			self.usershare_max_shares_entry.set_text("0")
 		if "os level" in config["global"]:
-			self.oslvl_entry.set_text(config["global"]["os level"])
+			if config["global"]["os level"].strip() !="":
+				self.oslvl_entry.set_text(config["global"]["os level"])
+			else:
+				self.oslvl_entry.set_text('20')
+		else:
+			self.oslvl_entry.set_text('20')
 		if "wins server" in config["global"]:
 			print "wins server"
 			self.winserv_entry.set_text(config["global"]["wins server"])
@@ -1031,10 +1066,22 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			config["global"]["wins server"]=self.winserv_entry.get_text()
 		elif "wins server" in config["global"]:
 			del config["global"]["wins server"]
-		config["global"]["netbios name"]=self.nb_name_entry.get_text()
+		if self.nb_name_entry.get_text().strip() =="":
+			del config["global"]["netbios name"]
+			print "\n\n\n deleted nb name\n\n\n"
+		else:
+			config["global"]["netbios name"]=self.nb_name_entry.get_text()
+		if self.oslvl_entry.get_text().strip() =="":
+			self.oslvl_entry.set_text("20")
 		config["global"]["os level"]=self.oslvl_entry.get_text()
+		if self.wg_entry.get_text().upper().strip() =="":
+			self.wg_entry.set_text("WORKGROUP")
 		config["global"]["workgroup"]=self.wg_entry.get_text().upper()
+		if self.serverstr_entry.get_text().strip()=="":
+			self.serverstr_entry.set_text("Samba %v")
 		config["global"]["server string"]=self.serverstr_entry.get_text()
+		if self.usershare_max_shares_entry.get_text().strip()=="":
+			self.usershare_max_shares_entry.set_text("0")
 		config["global"]["usershare max shares"]=self.usershare_max_shares_entry.get_text()
 		if self.usershare_owner_only.get_active()==True:
 			print "its true"

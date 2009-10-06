@@ -1,10 +1,3 @@
- * SAMBA Users -> Password Set ->  the default value is '0' when is not set, i suppose that this means "password not set", right ? what about change the 0 by the word "disabled" ? 
-
- * SAMBA Users ->  since the list is for "real users" (and not internal-system users), there's a lot of not-needed ones that the user should not select, the list should be started from the number of UID 1000 (all the real users created on teh system has an UID starting by 1000, so your first user is 1000, your second one is 1001, the next is 1002, etc). "if UID < 1000 ; then not show"
-   * UPDATE: it can start by the number 500, no problem, but should blacklist the match "nogroup" since has a UID number 65534
-
- * SAMBA Users ->  "Show Users With Unset Passwords", this means that they simply not works as "samba shared stuff", right ? mmh, what about change it by something like "show users disabled" ? (talking about the intuitiveness of the end-user, instead of the 'real internal work of the application'
-
  * When Quit the application, if the configuration is not saved/restarted it ask to the user if want to do that
 
 
