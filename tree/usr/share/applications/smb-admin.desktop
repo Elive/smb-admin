@@ -71,4 +71,4 @@ Icon=smb-admin
 Terminal=false
 MultipleArgs=false
 Type=Application
-Categories=System;Application;Network
+Categories=System
