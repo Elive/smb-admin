@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.08.01"
+VERSION="1.08.02"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -494,22 +494,24 @@ class GUI(gtk.Window):
 		restrtbtn.connect("clicked",self.restart_server)
 		about=gtk.Button(stock=gtk.STOCK_ABOUT)#"About")
 		about.connect("clicked",self.abtfunc)
-		quitbtn.connect("clicked",self.delete_event)
+		quitbtn.connect("clicked",self.Close_program)
 		bbox=gtk.HButtonBox()
 		bbox.pack_start(savebtn,False,True,0)
 		bbox.pack_start(restrtbtn,False,True,0)
 		bbox.pack_start(about,False,True,0)
 		bbox.pack_start(quitbtn,False,True,0)
 		vbox=gtk.VBox()
+		FRAME=gtk.Frame(label=None)
+		FRAME.add(vbox)
+		
 		vbox.pack_start(self.notebook,True,True,0)
 		vbox.pack_start(hsep,False,False,10)
 		vbox.pack_start(bbox,False,True,0)
 		##End Main Layout part II##
 		self.set_title(_("Smb-Admin"))
-		self.connect("delete_event", self.delete_event)
-		self.add(vbox)
-		self.set_has_frame(True)
-		self.set_frame_dimensions(4,2,4,2)
+		self.connect('delete_event', self.Close_program)
+#		self.add(vbox)
+		self.add(FRAME)
 		self.show_all()
 		self.pw_entry2=gtk.Entry()
 		self.pw_entry3=gtk.Entry()
@@ -709,26 +711,9 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				return self.msgbox(_("The passwords dont match."))
 
 		self.unpw2.destroy()
-	def delete_event( widget, event=None, data=None):
-		#~ if compare_conf== config:
-			#~ gtk.main_quit()
-			#~ return False
-		#~ else: 
-		#~ #def sub_func():
-			#~ msg=_("Changes have been made. Would you like to save before restarting the server?")
-			#~ x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
-			#~ x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
-			#~ x.show_all()
-			#~ response = x.run()
-			#~ if response == gtk.RESPONSE_YES:
-				#~ self.save_config(None)
-				#~ restart()
-			#~ elif response== gtk.RESPONSE_NO:
-				#~ restart()
-			#~ x.destroy()
-			#~ print "configuration has changed. Would you like to save it first?"
-			gtk.main_quit()
-			return False
+	def Close_program( widget, event=None, data=None):
+		gtk.main_quit()
+		return False
 	def del_share(self,widget):
 		s = self.sharetreeview.get_selection()
 		(ls, iter) = s.get_selected()	
@@ -1652,4 +1637,4 @@ class MAIN(threading.Thread):
 	def __init__(self):
 		gtk.main()
 main=MAIN()
-#gtk.main()
+
