@@ -2,3 +2,5 @@
 
  * The standard X11 closing of the application looks like to not be accepted (so, the [X] button of the window borders to close the window, or the Ctrl+Alt+X combo (that is the same)
    * Same problem in smb-browser
+
+ * idea: add a button launcher (to launch) smb-admin, something called "admin samba" or something like that, with a gksu/esu call to smb-admin
