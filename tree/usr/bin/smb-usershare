@@ -312,6 +312,7 @@ class GUI(gtk.Window):
 		ORIGINAL_SHARE=self.sh_entry.get_text()
 		if ORIGINAL_SHARE=="":
 			self.user_access_cmb.set_active(0)
+		self.public_sel.set_active(True)
 		self.sharbox_list.hide()
 		self.addsharbox.show()
 	def add_share_deactivate(self,widget):

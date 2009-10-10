@@ -32,7 +32,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.08"
+VERSION="1.08.01"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -1091,8 +1091,9 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		elif "wins server" in config["global"]:
 			del config["global"]["wins server"]
 		if self.nb_name_entry.get_text().strip() =="":
-			del config["global"]["netbios name"]
-			print "\n\n\n deleted nb name\n\n\n"
+			if "netbios name" in config["global"].keys():
+				del config["global"]["netbios name"]
+				print "\n\n\n deleted nb name\n\n\n"
 		else:
 			config["global"]["netbios name"]=self.nb_name_entry.get_text()
 		if self.oslvl_entry.get_text().strip() =="":
