@@ -4,3 +4,8 @@
    * Same problem in smb-browser
 
  * idea: add a button launcher (to launch) smb-admin, something called "admin samba" or something like that, with a gksu/esu call to smb-admin
+ 
+ * smb-usershare - add check/warning for enabled users and set passwords
+ 
+ * smb-usershare - change the method for choosing access to the folder
+ 
