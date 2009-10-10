@@ -100,7 +100,7 @@ class GUI(gtk.Window):
 		self.local_btn=gtk.Button(stock=gtk.STOCK_OPEN)
 		self.local_btn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Browse"))
 		self.local_btn.connect("clicked", self.folder_sel)
-		self.public_sel= gtk.CheckButton(_("Open To the Public"),True)
+		self.public_sel= gtk.CheckButton(_("Open To the Public (Guest access)"),True)
 
 		self.sharelist = gtk.ListStore(int,str,str,str)
 		self.sharetreeview = gtk.TreeView(self.sharelist)
