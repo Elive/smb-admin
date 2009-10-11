@@ -37,7 +37,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="0.1.5"
+VERSION="0.1.6"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
@@ -494,15 +494,18 @@ class GUI(gtk.Window):
 
 	def share_selected(self,x,y,widget):
 		print "SHARE SELECTED FUNC"
-		if self.show_all_shares.get_active()==True:
-			return
-		s = self.sharetreeview.get_selection()
-		(ls, iter) = s.get_selected()	
-		if iter is None:
-			print "nothing selected"
-			return
+		if type(widget)==str:
+			sharename=widget
 		else:
-			sharename=ls.get_value(iter, 1)
+			if self.show_all_shares.get_active()==True:
+				return
+			s = self.sharetreeview.get_selection()
+			(ls, iter) = s.get_selected()	
+			if iter is None:
+				print "nothing selected"
+				return
+			else:
+				sharename=ls.get_value(iter, 1)
 		print sharename
 		self.sh_entry.set_text(sharename)
 		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+sharename,shell=True,stdout=subprocess.PIPE).stdout.readlines())
@@ -583,10 +586,24 @@ if START_MSG!=None:
 	gui.msgbox(START_MSG)
 	sys.exit()
 if "-p" in sys.argv:
+	path=sys.argv[sys.argv.index("-p")+1]
+	print path
+	print "here is the agrv"
+	print sys.argv
+	
 	ORIGINAL_SHARE=""
 	gui.sharbox_list.hide()
 	gui.addsharbox.show()
 	gui.local_entry.set_text(sys.argv[sys.argv.index("-p")+1])
 	gui.sh_entry.set_text(sys.argv[sys.argv.index("-p")+1].rsplit("/",1)[1])
+	#get list of usershares
+	lsus=subprocess.Popen("net usershare list",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	output=lsus.stdout.readlines()
+	lsus.stdout.close();lsus.stderr.close()
+	for share in output:
+		share=share.strip()
+		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
+		if config[share]["path"] ==path:
+			gui.share_selected(None,None,share)
 
 gtk.main()
