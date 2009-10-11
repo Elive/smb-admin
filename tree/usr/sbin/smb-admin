@@ -311,6 +311,7 @@ class GUI(gtk.Window):
 		mod_btn=gtk.Button(stock=gtk.STOCK_EDIT)
 		mod_btn.connect("clicked",self.activate_share_sel)
 		view_usershares=gtk.Button(_("View Usershares"))
+		view_usershares.set_tooltip_text(_("Click to launch smb-usershare to view the list of usershares."))
 		usIMAGE=gtk.Image()
 		usIMAGE.set_from_icon_name("gnome-fs-smb",4)
 		view_usershares.set_image(usIMAGE)

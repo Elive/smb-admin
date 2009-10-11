@@ -1,8 +1,5 @@
  * When Quit the application, if the configuration is not saved/restarted it ask to the user if want to do that.
 
- * idea: add a button launcher (to launch) smb-admin, something called "admin samba" or something like that, with a gksu/esu call to smb-admin
- 
- * smb-usershare - add check/warning for enabled users and set passwords
- 
  * smb-usershare - change the method for choosing access to the folder
+	decided against this since it has a check in it in the case that users have defined other access options not available in smb-usershare
  
