@@ -153,23 +153,8 @@ class GUI(gtk.Window):
 		btn_box.pack_start(add_btn,False,True,0)
 		btn_box.pack_start(cancel_btn,False,True,0)
 		btn_box.pack_start(reset_btn,False,True,0)
-
-		#~ self.user_accesslist = gtk.ListStore(int,str,str)
-		#~ self.user_accesstreeview = gtk.TreeView(self.user_accesslist)
-		#~ self.user_accessscrolledwindow = gtk.ScrolledWindow()
-		#~ self.user_accessscrolledwindow.set_policy(True, True)
-		#~ self.user_accessscrolledwindow.add(self.user_accesstreeview)
-		#~ self.user_accessmodel = self.user_accesstreeview.get_selection()
-		#~ self.user_accessmodel.set_mode(gtk.SELECTION_SINGLE)
-		#~ self.user_accessR = gtk.CellRendererText()
-		
-		#~ self.user_accesstreeview.insert_column_with_attributes(0, "User", self.user_accessR, text=1)
-		#~ self.user_accesstreeview.insert_column_with_attributes(1, "Access", self.user_accessR, text=2)
 		user_access_ent_box=gtk.HBox()
-		#~ self.user_access_entry=gtk.Entry()
 		self.user_access_label=gtk.Label(_("Choose the type of access for users."))
-		#~ self.user_access_ok_btn=gtk.Button(stock=gtk.STOCK_OK)
-		#~ self.user_access_del_btn=gtk.Button(stock=gtk.STOCK_DELETE)
 		self.user_access_cmb=gtk.combo_box_new_text()
 		self.user_access_cmb.connect("changed",self.access_cmb_changed)
 		self.user_access_cmb.append_text("Leave Unchanged")
@@ -177,13 +162,10 @@ class GUI(gtk.Window):
 		self.user_access_cmb.append_text("Read / Write")
 		self.user_access_cmb.append_text("Deny All")
 #		self.user_access_cmb.set_active(0)
-		#~ user_access_ent_box.pack_start(self.user_access_entry,False,True,1)
-		#~ user_access_ent_box.pack_start(self.user_access_entry,False,True,1)
 		user_access_ent_box.pack_start(self.user_access_label,False,True,1)
 		user_access_ent_box.pack_start(self.user_access_cmb,False,True,1)
 		self.unchanged_lbl=gtk.Label(_("Leave Unchanged is used when the user has set access permissions that are more in depth than what is available here. Most users will not need this option."))
 		self.unchanged_lbl.set_line_wrap(True)
-		#~ user_access_ent_box.pack_start(self.user_access_ok_btn,False,True,1)
 	
 		self.addsharbox.pack_start(sh_box,False,False,0)
 		self.addsharbox.pack_start(comment_box,False,False,0)
@@ -191,10 +173,6 @@ class GUI(gtk.Window):
 		self.addsharbox.pack_start(self.public_sel,False,True,0)
 		self.addsharbox.pack_start(user_access_ent_box,False,True,1)
 		self.addsharbox.pack_start(self.unchanged_lbl,False,True,1)
-		#~ self.addsharbox.pack_start(self.user_access_label,False,True,1)
-		#~ self.addsharbox.pack_start(user_access_ent_box,False,True,0)
-		#~ self.addsharbox.pack_start(self.user_accessscrolledwindow,True,True,0)
-		#~ self.addsharbox.pack_start(self.user_access_del_btn,False,False,1)
 		self.addsharbox.pack_end(btn_box,False,True,0)
 			##right side##
 		#self.sharbox_list.pack_start(self.sharetreeview,True,True,0)
@@ -293,7 +271,7 @@ class GUI(gtk.Window):
 		self.pw_entry3=gtk.Entry()
 		self.uname_entry2=gtk.Entry()
 		self.addsharbox.hide()
-		self.set_size_request(390,300)
+		self.set_size_request(390,100)
 	def abtfunc(self,widget):
 		global VERSION
 		about_win=gtk.AboutDialog()
@@ -516,12 +494,6 @@ class GUI(gtk.Window):
 			self.public_sel.set_active(True)#.append("Yes")
 		elif config[sharename]["guest_ok"] == "n":	
 			self.public_sel.set_active(False)#.append("No")
-		#~ self.list_user_access(None)
-	#~ def list_user_access(self,widget):
-		#~ sharename=self.sh_entry.get_text()
-		#~ config=configobj.ConfigObj(os.popen("net usershare info "+sharename))
-		#~ z=0
-		#~ self.user_accesslist.clear()
 		#self.user_access_cmb.set_active(1)
 		everyone_present=False
 		for perm in config[sharename]["usershare_acl"]:
@@ -605,5 +577,5 @@ if "-p" in sys.argv:
 		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		if config[share]["path"] ==path:
 			gui.share_selected(None,None,share)
-
+gui.set_size_request(390,255)
 gtk.main()
