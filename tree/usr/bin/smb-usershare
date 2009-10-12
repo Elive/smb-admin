@@ -41,7 +41,7 @@ VERSION="0.1.6"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
-if "-h" in sys.argv:
+if "-h" in sys.argv or "--help" in sys.argv:
 	print "Usage:"
 	print "\t-h \t"+_("Display this message")
 	print "\t-v \t"+_("Verbose mode")
@@ -271,7 +271,7 @@ class GUI(gtk.Window):
 		self.pw_entry3=gtk.Entry()
 		self.uname_entry2=gtk.Entry()
 		self.addsharbox.hide()
-		self.set_size_request(390,100)
+		self.set_size_request(390,250)
 	def abtfunc(self,widget):
 		global VERSION
 		about_win=gtk.AboutDialog()
@@ -489,7 +489,7 @@ class GUI(gtk.Window):
 		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+sharename,shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		self.local_entry.set_text(config[sharename]["path"])
 		self.comment_entry.set_text(config[sharename]["comment"])
-		print config[sharename]["guest_ok"]+"here here matey"
+		print config[sharename]["guest_ok"]
 		if config[sharename]["guest_ok"] == "y":
 			self.public_sel.set_active(True)#.append("Yes")
 		elif config[sharename]["guest_ok"] == "n":	
@@ -559,10 +559,6 @@ if START_MSG!=None:
 	sys.exit()
 if "-p" in sys.argv:
 	path=sys.argv[sys.argv.index("-p")+1]
-	print path
-	print "here is the agrv"
-	print sys.argv
-	
 	ORIGINAL_SHARE=""
 	gui.sharbox_list.hide()
 	gui.addsharbox.show()
@@ -577,5 +573,4 @@ if "-p" in sys.argv:
 		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		if config[share]["path"] ==path:
 			gui.share_selected(None,None,share)
-gui.set_size_request(390,255)
 gtk.main()
