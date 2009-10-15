@@ -31,7 +31,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.08.03"
+VERSION="1.08.04"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -258,6 +258,9 @@ class GUI(gtk.Window):
 		self.share_info=gtk.Label("")
 		self.valuser_entry=gtk.Entry()
 		self.valuser_entry.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate usernames with a comma."))
+		user_access_info_lbl=gtk.Label(_("Note: Remote access is limited by Samba and by the permissions of the files or folders being shared."))
+		user_access_info_lbl.set_tooltip_text(_("If Samba is set to read/write but the System user account which was used to login to Samba with can only read, then write will not be available. (if logged in as guest, the System account is 'nobody')"))
+		user_access_info_lbl.set_line_wrap(True)
 		self.sharelist = gtk.ListStore(int,str,str,str,str,str,str,str)
 		self.sharetreeview = gtk.TreeView(self.sharelist)
 		
@@ -369,6 +372,7 @@ class GUI(gtk.Window):
 		self.addsharbox.pack_start(valuser_box,False,False,0)
 		self.addsharbox.pack_start(self.share_info,False,False,0)
 		self.addsharbox.pack_end(btn_box,False,True,0)
+		self.addsharbox.pack_end(user_access_info_lbl,False,True,0)
 			##right side##
 		#self.sharbox_list.pack_start(self.sharetreeview,True,True,0)
 		self.sharbox_list.pack_start(self.homes_sel,False,True,1)

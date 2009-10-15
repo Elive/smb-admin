@@ -37,7 +37,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="0.1.6"
+VERSION="0.1.7"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
@@ -87,8 +87,9 @@ class GUI(gtk.Window):
 		self.addsharbox=gtk.VBox()
 		self.sharbox_list=gtk.VBox()
 		self.sharbox=gtk.VBox()
-		self.sharbox.pack_start(self.addsharbox,True,True,1)
-		self.sharbox.pack_start(self.sharbox_list,True,True,1)
+#		self.sharbox.pack_start(self.addsharbox,True,True,1)
+#		self.sharbox.pack_start(self.sharbox_list,True,True,1)
+		self.sharbox.add(self.sharbox_list)#,True,True,1)
 		##End Main Layout part I##
 		##Interior share layout##
 		sh_lbl=gtk.Label(_("Share Name:"))
@@ -162,9 +163,12 @@ class GUI(gtk.Window):
 		self.user_access_cmb.append_text("Read / Write")
 		self.user_access_cmb.append_text("Deny All")
 #		self.user_access_cmb.set_active(0)
+		user_access_info_lbl=gtk.Label(_("Note: Remote access is limited by Samba and by the permissions of the files or folders being shared."))
+		user_access_info_lbl.set_tooltip_text(_("If Samba is set to read/write but the System user account which was used to login to Samba with can only read, then write will not be available. (if logged in as guest, the System account is 'nobody')"))
+		user_access_info_lbl.set_line_wrap(True)
 		user_access_ent_box.pack_start(self.user_access_label,False,True,1)
 		user_access_ent_box.pack_start(self.user_access_cmb,False,True,1)
-		self.unchanged_lbl=gtk.Label(_("Leave Unchanged is used when the user has set access permissions that are more in depth than what is available here. Most users will not need this option."))
+		self.unchanged_lbl=gtk.Label(_("'Leave Unchanged' is used when the user has set access permissions that are more in depth than what is available here. Most users will not need this option."))
 		self.unchanged_lbl.set_line_wrap(True)
 	
 		self.addsharbox.pack_start(sh_box,False,False,0)
@@ -174,6 +178,7 @@ class GUI(gtk.Window):
 		self.addsharbox.pack_start(user_access_ent_box,False,True,1)
 		self.addsharbox.pack_start(self.unchanged_lbl,False,True,1)
 		self.addsharbox.pack_end(btn_box,False,True,0)
+		self.addsharbox.pack_end(user_access_info_lbl,False,True,0)
 			##right side##
 		#self.sharbox_list.pack_start(self.sharetreeview,True,True,0)
 		self.show_all_shares= gtk.CheckButton(_("Show shares from all users"),True)
@@ -267,11 +272,13 @@ class GUI(gtk.Window):
 		FRAME.add(vbox)
 		self.add(FRAME)
 		self.show_all()
+		self.addsharbox.show_all()
+		self.unchanged_lbl.hide()
 		self.pw_entry2=gtk.Entry()
 		self.pw_entry3=gtk.Entry()
 		self.uname_entry2=gtk.Entry()
-		self.addsharbox.hide()
-		self.set_size_request(390,250)
+#		self.addsharbox.hide()
+		self.set_size_request(525,325)
 	def abtfunc(self,widget):
 		global VERSION
 		about_win=gtk.AboutDialog()
@@ -294,19 +301,21 @@ class GUI(gtk.Window):
 	def activate_share_sel(self,widget):
 		self.share_selected(None,None,None)
 	def add_share_activate(self,widget):
+
 		print "add share activated"
 		print self.sh_entry.get_text()
 		global ORIGINAL_SHARE
 		ORIGINAL_SHARE=self.sh_entry.get_text()
 		if ORIGINAL_SHARE=="":
+			
 			self.user_access_cmb.set_active(1)
 		if widget!=None:
 			self.public_sel.set_active(True)
-		self.sharbox_list.hide()
-		self.addsharbox.show()
+		self.sharbox.remove(self.sharbox_list)
+		self.sharbox.pack_start(self.addsharbox)
 	def add_share_deactivate(self,widget):
-		self.sharbox_list.show()
-		self.addsharbox.hide()
+		self.sharbox.remove(self.addsharbox)
+		self.sharbox.add(self.sharbox_list)
 		self.share_clear(None)
 
 	def add_share(self,widget):
@@ -573,4 +582,5 @@ if "-p" in sys.argv:
 		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		if config[share]["path"] ==path:
 			gui.share_selected(None,None,share)
+#gui.set_size_request(280,280)
 gtk.main()
