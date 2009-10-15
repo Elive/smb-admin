@@ -24,7 +24,6 @@
 ##license in '/usr/share/licenses/common/'.
 import pygtk
 pygtk.require('2.0')
-#import popen2
 import configobj,gtk,os,time,sys,threading,gettext
 import subprocess as subp
 APP = 'smb-admin'
@@ -32,7 +31,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.08.02"
+VERSION="1.08.03"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -1272,7 +1271,6 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			user=ls.get_value(iter,1)
 			STATUS=""
 			pdbeditcmd=subp.Popen("pdbedit -Lv -u "+user,shell=True,stdout=subp.PIPE)
-#			info=os.popen("pdbedit -Lv -u "+user)
 			for line in pdbeditcmd.stdout.readlines():
 #				print line
 				if "Flags" in line:
@@ -1374,31 +1372,30 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				response = x.run()
 				if response == gtk.RESPONSE_YES:
 					print "deleting user: "+username
-					cx=os.popen("pdbedit -x "+username)
-					cx.close()
+					cx=subp.Popen("pdbedit -x "+username,shell=True)
 				elif response== gtk.RESPONSE_NO:
 					print "Not deleting user: "+username
 				x.destroy()
 			elif data=="toggle":
-				file=os.popen("pdbedit -Lv -u "+username)
+				pdbecmd=subp.Popen("pdbedit -Lv -u "+username,shell=True,stdout=subp.PIPE)
+				file=pdbecmd.stdout.readlines()
+				pdbecmd.stdout.close()
 				for line in file:
 					if line.startswith("Account Flags"):
 						flags=line.split("[")[1].strip().strip("]").strip()
 						flags=flags.strip("TUMWSI")
-				file.close()
+				#file.close()
 				print flags
 				if ls.get_value(iter,2)=="Enabled":
 					flags="D"+flags
 					print flags+"<<<<FLAGS for disable"
 					print ("pdbedit -c \"["+flags+"]\" -u "+username)
-					x=os.popen("pdbedit -c \"["+flags+"]\" -u "+username)
-					x.close()
+					pdbencmd=subp.Popen("pdbedit -c \"["+flags+"]\" -u "+username,shell=True)
 				elif ls.get_value(iter,2)=="Disabled":
 					flags=flags.replace("D","")
 					print flags+"<<<<< FLAGS for enable"
 					print ( "pdbedit -c \"["+flags+"]\" -u  "+username)
-					x=os.popen( "pdbedit -c \"["+flags+"]\" -u  "+username)
-					x.close()
+					pdbdiscmd=subp.Popen("pdbedit -c \"["+flags+"]\" -u  "+username,shell=True)
 			elif data=="changepw":
 				return self.unamepw(data,_("Please enter the new passwords for ")+username)
 			#gui.updateusers(None)
@@ -1469,11 +1466,14 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		gtk.gdk.threads_enter()
 		self.userlist.clear()
 		gtk.gdk.threads_leave()
-		for line in os.popen("pdbedit -L"):
+		print "HERE WE AREH"
+		for line in subp.Popen("pdbedit -L",shell=True,stdout=subp.PIPE).stdout.readlines():
 			user=line.split(":")[0]
 			y=0
 			STATUS="";pw_set=""
-			info=os.popen("pdbedit -Lv -u "+user)
+			pdbelscmd=subp.Popen("pdbedit -Lv -u "+user,shell=True,stdout=subp.PIPE)
+			info=pdbelscmd.stdout.readlines()
+			pdbelscmd.stdout.close()
 			for line in info:
 				if "Flags" in line:
 					line2=line.split("[")[1].strip().strip("]").strip()
