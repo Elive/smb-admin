@@ -2,4 +2,6 @@
 
  * smb-usershare - change the method for choosing access to the folder
 	decided against this since it has a check in it in the case that users have defined other access options not available in smb-usershare
+
+ * BUG: adding some users to the "valid users" of smb-admin (editing a share), causes wrong extra " and spaces characters in the smb.conf file for this entry
  
