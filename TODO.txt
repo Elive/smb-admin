@@ -4,4 +4,8 @@
 	decided against this since it has a check in it in the case that users have defined other access options not available in smb-usershare
 
  * BUG: adding some users to the "valid users" of smb-admin (editing a share), causes wrong extra " and spaces characters in the smb.conf file for this entry
+
+ * Instead of the "Note: Remote access is limited by Samba and by the permissions of the files or folders being shared." message that the users wont read, could be nice to have this, instead:
+   - if the user has added a share that is in mode RW and the folder is not 777, popup a question to the user if he wants to change the permissions to the directory (yes, smb-usershare changing permissions). If we dont do that, the user is unable to have it working like how he wants (RW), and if he's going to chmod it too in order to have it working, why dont do this directly from the application ? (there's also the human factor that doesn't read the 'Note')
+
  
