@@ -37,7 +37,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="0.1.8"
+VERSION="0.1.8.1"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
@@ -575,6 +575,8 @@ if START_MSG!=None:
 	sys.exit()
 if "-p" in sys.argv:
 	path=sys.argv[sys.argv.index("-p")+1]
+	print "we want to add a share on startup"
+	print "the path is "+path
 	ORIGINAL_SHARE=""
 	gui.local_entry.set_text(sys.argv[sys.argv.index("-p")+1])
 	gui.sh_entry.set_text(sys.argv[sys.argv.index("-p")+1].rsplit("/",1)[1])
