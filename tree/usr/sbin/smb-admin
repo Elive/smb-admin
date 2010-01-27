@@ -639,9 +639,14 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			config[sharename]["path"]=self.local_entry.get_text()
 		elif "path" in config[sharename]:
 			del config[sharename]["path"]
-		config[sharename]["comment"]=self.comment_entry.get_text()
+		if self.comment_entry.get_text().strip()=="":
+			if "comment" in config[sharename].keys():
+				del config[sharename]["comment"]
+				print "deleted comment from share "+sharename
+		else:
+			config[sharename]["comment"]=self.comment_entry.get_text()
 		if self.valuser_entry.get_text().strip()!="":
-			validusers=self.valuser_entry.get_text().strip().split(",")
+			validusers=self.valuser_entry.get_text().strip().strip(",")
 			config[sharename]["valid users"]=validusers
 			print validusers,"    <<<"
 		elif "valid users" in config[sharename]:
@@ -1470,7 +1475,6 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		gtk.gdk.threads_enter()
 		self.userlist.clear()
 		gtk.gdk.threads_leave()
-		print "HERE WE AREH"
 		for line in subp.Popen("pdbedit -L",shell=True,stdout=subp.PIPE).stdout.readlines():
 			user=line.split(":")[0]
 			y=0

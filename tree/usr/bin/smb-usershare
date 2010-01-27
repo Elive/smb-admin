@@ -451,7 +451,7 @@ class GUI(gtk.Window):
 		else:
 			sharename=ls.get_value(iter, 1)
 		if sharename !="":
-			useshardel=subprocess.Popen("net usershare delete "+sharename,shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			useshardel=subprocess.Popen("net usershare delete \""+sharename+"\"",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 			output=useshardel.stdout.readlines()
 			error=useshardel.stderr.readlines()
 			if useshardel.wait()==0:
@@ -502,7 +502,7 @@ class GUI(gtk.Window):
 				sharename=ls.get_value(iter, 1)
 		print sharename
 		self.sh_entry.set_text(sharename)
-		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+sharename,shell=True,stdout=subprocess.PIPE).stdout.readlines())
+		config=configobj.ConfigObj(subprocess.Popen("net usershare  info \""+sharename+"\"",shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		self.local_entry.set_text(config[sharename]["path"])
 		self.comment_entry.set_text(config[sharename]["comment"])
 		print config[sharename]["guest_ok"]
@@ -560,7 +560,7 @@ class GUI(gtk.Window):
 		for share in share_list:
 			print share
 			share=share.strip()
-			info_conf=configobj.ConfigObj(subprocess.Popen(COMMAND+" info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
+			info_conf=configobj.ConfigObj(subprocess.Popen(COMMAND+" info \""+share+"\"",shell=True,stdout=subprocess.PIPE).stdout.readlines())
 			comments.append(info_conf[share]["comment"])
 			path.append(info_conf[share]["path"])
 			iter = self.sharelist.append( [z,share,comments[z],path[z]])#comment[z],readonly[z],public[z],path[z]] )
@@ -586,12 +586,10 @@ if "-p" in sys.argv:
 	lsus.stdout.close();lsus.stderr.close()
 	for share in output:
 		share=share.strip()
-		config=configobj.ConfigObj(subprocess.Popen("net usershare  info "+share,shell=True,stdout=subprocess.PIPE).stdout.readlines())
+		config=configobj.ConfigObj(subprocess.Popen("net usershare  info \""+share+"\"",shell=True,stdout=subprocess.PIPE).stdout.readlines())
 		if config[share]["path"] ==path:
 			gui.share_selected(None,None,share)
 			break
 	gui.add_share_activate(None)
 
-		#gui.share_selected(None,None,path)
-#gui.set_size_request(280,280)
 gtk.main()

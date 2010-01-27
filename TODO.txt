@@ -1,8 +1,5 @@
  * When Quit the application, if the configuration is not saved/restarted it ask to the user if want to do that.
 
- * smb-usershare - change the method for choosing access to the folder
-	decided against this since it has a check in it in the case that users have defined other access options not available in smb-usershare
-
  * BUG: adding some users to the "valid users" of smb-admin (editing a share), causes wrong extra " and spaces characters in the smb.conf file for this entry
 
  * Instead of the "Note: Remote access is limited by Samba and by the permissions of the files or folders being shared." message that the users wont read, could be nice to have this, instead:
