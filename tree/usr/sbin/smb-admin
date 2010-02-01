@@ -31,7 +31,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="1.08.04"
+VERSION="1.08.05"
 if len(sys.argv)>1:
 	ARG=sys.argv[1]
 	if ARG=="-v":
@@ -616,6 +616,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		self.share_clear(None)
 
 	def add_share(self,widget):
+		print "adding share !!!!!!!!!!!!!!@@@@@@@@@@@@@@@@@@@@##############"
 		state=[]
 		global ORIGINAL_SHARE
 		if ORIGINAL_SHARE != "":
@@ -627,12 +628,13 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			else:
 				type="yes"
 			state.append(type)
+		
 		sharename=self.sh_entry.get_text().strip()
 		if sharename.strip()=="":
-			return self.msgbox(_("Please enter a sharename."))
+			return self.msgbox(_("Please enter a sharename."),False)
 		elif self.local_entry.get_text().strip()=="":
 			if sharename.strip() !="homes":
-				return self.msgbox(_("Please enter a share path."))
+				return self.msgbox(_("Please enter a share path."),False)
 		if sharename not in config.keys():
 			config[sharename]={}
 		if sharename.strip() !="homes":
@@ -663,7 +665,8 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		print "writeable = ",config[sharename]["writeable"]
 		print "available = ",config[sharename]["available"]
 		print "public = ",config[sharename]["public"]
-		
+		if state[1].strip()=="yes":
+			self.msgbox(_("WARNING: If you have problems writting to this folder remotely, be sure that the Systems Folder Permissions allow write access to the 'Others' group. This can be done via the alt-click on the folder > Properties > Permissions in most file managers."), _("Remote access is limited by Samba and by the permissions of the files or folders being shared. If Samba is set to read/write but the System user account which was used to login to Samba with can only read, then write access will be denied. (If logged in as guest, the System account is 'nobody') The easiest way to fix this is to access folder permissions via your file manager and change the permissions for 'Others' to Read / Write. If you do not apply them recursively, then only that folder will have the Read / Write access."))
 		self.share_clear(None)
 		self.add_share_deactivate(None)
 		return gui.updateshare()
@@ -687,12 +690,12 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		if errors == []:
 			print "no errors, show output"
 			if "cannot locate unix account" in output_str.lower():
-				self.msgbox(output_str+_("Please create a system user for that username on this machine first."))
+				self.msgbox(output_str+_("Please create a system user for that username on this machine first."),False)
 			else:
-				self.msgbox(output_str)
+				self.msgbox(output_str,False)
 		else:
 			print "errors present, show errors"
-			self.msgbox(_("Error adding user")+" \'"+user+"\':\n"+errors_str)#str(errors).strip("\'[").strip("]\'").strip("\n"))
+			self.msgbox(_("Error adding user")+" \'"+user+"\':\n"+errors_str,False)#str(errors).strip("\'[").strip("]\'").strip("\n"))
 		self.unpw2.destroy()
 		#return gui.updateusers(None)
 		udt=UDU_thread()
@@ -713,11 +716,11 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				pdb.stdin.write(pw2+"\n")
 				if pdb.stderr.readlines() ==[]:
 					print "NO ERRORS"
-					self.msgbox(_("Successfully changed the password")+str(pdb.stdout.readlines()))
+					self.msgbox(_("Successfully changed the password")+str(pdb.stdout.readlines()),False)
 				else:
 					print pdb.stderr.readlines()
 			else:
-				return self.msgbox(_("The passwords dont match."))
+				return self.msgbox(_("The passwords dont match."),False)
 
 		self.unpw2.destroy()
 	def Close_program( widget, event=None, data=None):
@@ -893,8 +896,15 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		self.psharetreeview.show()
 		self.print_hbbox.show()
 		self.vbox_pr.hide()
-	def msgbox(self,MSG):
+	def msgbox(self,MSG,alt_msg):
 		popup = gtk.MessageDialog(parent=None, flags=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_OK, message_format=MSG)
+		if alt_msg !=False:
+			lbl=gtk.Label(alt_msg)
+			lbl.set_line_wrap(True)
+			exp=gtk.Expander(label=_("More Details"))
+			exp.add(lbl)
+			popup.vbox.pack_start(exp)
+
 		popup.set_position(gtk.WIN_POS_CENTER_ALWAYS)
 		popup.show_all()
 		popup.run()
