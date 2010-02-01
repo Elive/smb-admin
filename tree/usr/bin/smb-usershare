@@ -37,7 +37,7 @@ DIR = '/usr/share/locale/'
 gettext.bindtextdomain(APP, DIR)
 gettext.textdomain(APP)
 _ = gettext.gettext
-VERSION="0.2.1"
+VERSION="0.2.2"
 if "-V" in sys.argv:
 	print "Smb-Usershare version: ",VERSION
 	sys.exit()
@@ -161,9 +161,6 @@ class GUI(gtk.Window):
 		self.user_access_cmb.append_text("Read / Write")
 		self.user_access_cmb.append_text("Deny All")
 #		self.user_access_cmb.set_active(0)
-		user_access_info_lbl=gtk.Label("\n"+_("Note: Remote access is limited by Samba and by the permissions of the files or folders being shared."))
-		user_access_info_lbl.set_tooltip_text(_("If Samba is set to read/write but the System user account which was used to login to Samba with can only read, then write will not be available. (if logged in as guest, the System account is 'nobody')"))
-		user_access_info_lbl.set_line_wrap(True)
 		user_access_ent_box.pack_start(self.user_access_label,False,True,1)
 		user_access_ent_box.pack_start(self.user_access_cmb,False,True,1)
 		self.unchanged_lbl=gtk.Label(_("'Leave Unchanged' is used when the user has set access permissions that are more in depth than what is available here. Most users will not need this option.")+"\n")
@@ -176,7 +173,7 @@ class GUI(gtk.Window):
 		self.addsharbox.pack_start(user_access_ent_box,False,True,1)
 		self.addsharbox.pack_start(self.unchanged_lbl,False,True,1)
 		self.addsharbox.pack_end(btn_box,False,True,0)
-		self.addsharbox.pack_end(user_access_info_lbl,False,True,0)
+
 			##right side##
 		#self.sharbox_list.pack_start(self.sharetreeview,True,True,0)
 		self.show_all_shares= gtk.CheckButton(_("Show shares from all users"),True)
