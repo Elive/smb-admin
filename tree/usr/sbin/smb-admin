@@ -145,9 +145,9 @@ class GUI(gtk.Window):
 		wg_box.pack_start(self.wg_entry,False,True,73)
 		
 		serverstr_box=gtk.HBox()
-		serverstr_lbl=gtk.Label(_("Sever String"))
+		serverstr_lbl=gtk.Label(_("Server String"))
 		self.serverstr_entry=gtk.Entry()
-		self.serverstr_entry.set_tooltip_text(_("This option specifies the string that you wish to show to your users in the printer comment box in print manager, or to the IPC connection in the net view command under Windows machines. You can use %h for 'hostname' or %v for the samba version number."))
+		self.serverstr_entry.set_tooltip_text(_("This option specifies the string that you wish to show to your users in the printer comment box in print manager, or to the IPC connection in the net view command on Windows machines. You can use %h for 'hostname' or %v for the Samba version number."))
 		serverstr_box.pack_start(serverstr_lbl,False,True,2)
 		serverstr_box.pack_start(self.serverstr_entry,False,True,65)
 		
@@ -162,13 +162,13 @@ class GUI(gtk.Window):
 #		self.prefmb_sel=gtk.CheckButton(_("Preferred Master Browser(one per network)"), False)
 #		self.prefmb_sel.connect("clicked", self.prefmb_func)
 		self.localmb_sel= gtk.CheckButton(_("Local Master Browser"),True)
-		self.localmb_sel.set_tooltip_text(_("When checked 'nmbd' will try to become the 'local master browser' on a subnet. If unchecked, 'nmbd' will Never become the 'local master browser.' A Master browser holds a 'Browse List' for the LAN by collecting service announcements. Default is checked."))
+		self.localmb_sel.set_tooltip_text(_("When checked 'nmbd' will try to become the 'local master browser' on a subnet. If unchecked, 'nmbd' will NEVER become the 'local master browser.' A Master browser holds a 'Browse List' for the LAN by collecting service announcements. Default is checked."))
 		self.localmb_sel.connect("clicked", self.localmb_func)
 		
 		oslvl_box=gtk.HBox()
 		oslvl_lbl=gtk.Label(_("OS Level"))
 		self.oslvl_entry=gtk.Entry()
-		self.oslvl_entry.set_tooltip_text(_("The OS Level controls what level Samba advertises itself as for browser  elections. It determines whether 'nmbd' has a chance of becoming a 'local master browser.' Default is 20 which will win elections against all Microsoft operating systems except Windows NT 4.0/2000 Domain Controller."))
+		self.oslvl_entry.set_tooltip_text(_("The OS Level controls what level Samba advertises itself for browser elections. It determines whether 'nmbd' has a chance of becoming a 'local master browser'. Default is 20 which will win elections against all Microsoft operating systems except Windows NT 4.0/2000 Domain Controllers."))
 		self.oslvl_entry.set_width_chars (8)
 		oslvl_box.pack_start(oslvl_lbl,False,True,2)
 		oslvl_box.pack_start(self.oslvl_entry,False,True,90)
@@ -200,11 +200,11 @@ class GUI(gtk.Window):
 		self.usershare_max_shares_hbox.pack_start(self.usershare_max_shares_entry,False,True,32)
 		self.usershare_owner_only=gtk.CheckButton(_("Owners can only share their directories"))
 		self.usershare_owner_only.set_tooltip_text(_("If set, then only the directories owned by the sharing user can be shared."))
-		usershare_about_lbl=gtk.Label(_("'Usershares' are shares that the users can create, modify, and delete without being an administrator. They must have read, write, and execute access to '/var/lib/samba/usershares/'. To disable 'usershares', set the max number of usershares to 0."))
+		usershare_about_lbl=gtk.Label(_("'Usershares' are shares that the users create, modify, and delete without being an administrator. They must have read, write, and execute access to '/var/lib/samba/usershares'. To disable 'usershares', set the max number of usershares to 0."))
 		usershare_about_lbl.set_line_wrap(True)
 		self.homes_sel= gtk.CheckButton(_("Share Home Directories"),True)
 		self.homes_sel.connect("clicked", self.homes_toggle)
-		self.what_are_shares_lbl=gtk.Label(_("This is a list of the folders that you are sharing, you can add, remove and edit them below."))
+		self.what_are_shares_lbl=gtk.Label(_("This is a list of the folders that you are sharing. You can add, remove and edit them below."))
 		self.what_are_shares_lbl.set_line_wrap(True)
 		
 		restorebtn=gtk.Button(stock=gtk.STOCK_REVERT_TO_SAVED)#"Restore Config"
@@ -247,7 +247,7 @@ class GUI(gtk.Window):
 		self.local_btn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Browse"))
 		self.local_btn.connect("clicked", self.folder_sel)
 		self.browseable_sel= gtk.CheckButton(_("Visible on clients"),True)
-		self.browseable_sel.set_tooltip_text(_("Check this if you want the share to be listed when clients request the share list from the server. Otherwise, it will be availabe but it will not be seen."))
+		self.browseable_sel.set_tooltip_text(_("Check this if you want the share to be listed when clients request the share list from the server. Otherwise, it will be available, but it will not be seen."))
 		self.write_sel= gtk.CheckButton(_("Writeable"),True)
 		self.avail_sel= gtk.CheckButton(_("Enabled"),True)
 		self.follow_sel=gtk.CheckButton(_("Follow symlinks"),False)
@@ -257,7 +257,7 @@ class GUI(gtk.Window):
 		valuser_lbl=gtk.Label(_("Valid Users (optional)"))
 		self.share_info=gtk.Label("")
 		self.valuser_entry=gtk.Entry()
-		self.valuser_entry.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate usernames with a comma."))
+		self.valuser_entry.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate user names with a comma."))
 		self.sharelist = gtk.ListStore(int,str,str,str,str,str,str,str)
 		self.sharetreeview = gtk.TreeView(self.sharelist)
 		
@@ -309,7 +309,7 @@ class GUI(gtk.Window):
 		del_btn.connect("clicked",self.del_share)
 		mod_btn=gtk.Button(stock=gtk.STOCK_EDIT)
 		mod_btn.connect("clicked",self.activate_share_sel)
-		view_usershares=gtk.Button(_("View Usershares"))
+		view_usershares=gtk.Button(_("View usershares"))
 		view_usershares.set_tooltip_text(_("Click to launch smb-usershare to view the list of usershares."))
 		usIMAGE=gtk.Image()
 		usIMAGE.set_from_icon_name("gnome-fs-smb",4)
@@ -377,7 +377,7 @@ class GUI(gtk.Window):
 		self.sharbox_list.pack_end(shar_bbox,False,True,0)
 		##End Interior share layout##
 		##Users Interior layout##
-		self.users_lbl=gtk.Label(_("Samba users (and guests if enabled) are the only ones allowed to login to the Samba server. System users can not login without first being added to the Samba user list. Only pre-existing system users can be added as Samba users."))
+		self.users_lbl=gtk.Label(_("Samba users (and guests, if enabled) are the only ones allowed to login to the Samba server. System users can not login without first being added to the Samba user list. Only pre-existing system users can be added as Samba users."))
 		self.users_lbl.set_line_wrap(True)
 		self.show_allusers=gtk.CheckButton(_("Show Users With Unset Passwords"),True)
 		self.show_allusers.set_tooltip_text(_("Users with unset passwords can NOT login to the server"))
@@ -662,7 +662,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		print "available = ",config[sharename]["available"]
 		print "public = ",config[sharename]["public"]
 		if state[1].strip()=="yes":
-			self.msgbox(_("WARNING: If you have problems writting to this folder remotely, be sure that the Systems Folder Permissions allow write access to the 'Others' group. This can be done via the alt-click on the folder > Properties > Permissions in most file managers."), _("Remote access is limited by Samba and by the permissions of the files or folders being shared. If Samba is set to read/write but the System user account which was used to login to Samba with can only read, then write access will be denied. (If logged in as guest, the System account is 'nobody') The easiest way to fix this is to access folder permissions via your file manager and change the permissions for 'Others' to Read / Write. If you do not apply them recursively, then only that folder will have the Read / Write access."))
+			self.msgbox(_("WARNING: If you have problems writing to this folder remotely, be sure that the Systems Folder Permissions allow write access to the 'Others' group. This can be done via the alt-click on the folder > Properties > Permissions in most file managers."), _("Remote access is limited by Samba and by files or folders permissions being shared. If Samba is set to read/write but the System user account which was used to login to Samba with can read only, then write access will be denied (if logged in as guest, the System account is 'nobody'). The easiest way to fix this is to access folder permissions via your file manager and change the permissions for 'Others' to Read / Write. If you do not apply them recursively, then only that folder will have the Read / Write access."))
 		self.share_clear(None)
 		self.add_share_deactivate(None)
 		return gui.updateshare()
@@ -716,7 +716,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				else:
 					print pdb.stderr.readlines()
 			else:
-				return self.msgbox(_("The passwords dont match."),False)
+				return self.msgbox(_("The passwords don't match."),False)
 
 		self.unpw2.destroy()
 	def Close_program( widget, event=None, data=None):
@@ -825,7 +825,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			ok_btn.connect("clicked",self.mod_pr_cmd)
 						
 			self.pbrowseable_sel= gtk.CheckButton(_("Visible on clients"),True)
-			self.pbrowseable_sel.set_tooltip_text(_("Check this if you want the print share listed when clients request the share list from the server. Otherwise, it will be availabe but it will not be seen"))
+			self.pbrowseable_sel.set_tooltip_text(_("Check this if you want the print share listed when clients request the share list from the server. Otherwise, it will be available, but it will not be seen"))
 			self.pavail_sel= gtk.CheckButton(_("Enabled"),True)
 			self.ppub_sel= gtk.CheckButton(_("Open to the Public"),False)
 			self.ppub_sel.set_tooltip_text(_("This allows guests (non Samba users) to access the print share."))
@@ -1037,7 +1037,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			return restart()
 		else: 
 		#def sub_func():
-			msg=_("Changes have been made. Would you like to save before restarting the server?")
+			msg=_("Changes have been made. Would you like to save them before restarting the server?")
 			x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
 			x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
 			x.show_all()
