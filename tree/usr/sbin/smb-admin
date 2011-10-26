@@ -716,7 +716,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				else:
 					print pdb.stderr.readlines()
 			else:
-				return self.msgbox(_("The passwords don't match."),False)
+				return self.msgbox(_("The passwords doesn't match."),False)
 
 		self.unpw2.destroy()
 	def Close_program( widget, event=None, data=None):
