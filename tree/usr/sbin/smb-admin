@@ -408,7 +408,7 @@ class GUI(gtk.Window):
 		userdel_btn.connect("clicked",self.user_func,"del")
 		usermod_btn.connect("clicked",self.user_func,"changepw")
 		self.usertog_btn.connect("clicked",self.user_func,"toggle")
-		self.unset_pw_info_lbl=gtk.Label(_("Users with passwords that have 'Never' been set, cannot login to SAMBA"))
+		self.unset_pw_info_lbl=gtk.Label(_("Users with passwords that have 'Never' been set cannot login to SAMBA"))
 		
 		users_bbox=gtk.HButtonBox()
 		users_bbox.pack_start(useradd_btn,False,True,0)
