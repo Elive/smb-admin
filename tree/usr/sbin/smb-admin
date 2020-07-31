@@ -400,8 +400,8 @@ class GUI(gtk.Window):
 		self.userscrolledwindow.add(self.usertreeview)
 		self.userscrolledwindow.set_policy(True, True)
 		
-		usermod_btn=gtk.Button(_("Change password"))
-		self.usertog_btn=gtk.Button(_("Enable/Disable"))
+		usermod_btn=gtk.Button(_("Change Password"))
+		self.usertog_btn=gtk.Button(_("Enable / Disable"))
 		useradd_btn=gtk.Button(stock=gtk.STOCK_ADD)
 		userdel_btn=gtk.Button(stock=gtk.STOCK_DELETE)
 		useradd_btn.connect("clicked",self.user_func,"add")
@@ -716,7 +716,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				else:
 					print pdb.stderr.readlines()
 			else:
-				return self.msgbox(_("The passwords doesn't match."),False)
+				return self.msgbox(_("The passwords do not match."),False)
 
 		self.unpw2.destroy()
 	def Close_program( widget, event=None, data=None):
