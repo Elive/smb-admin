@@ -45,7 +45,7 @@ if "-h" in sys.argv or "--help" in sys.argv:
 	print "Usage:"
 	print "\t-h \t"+_("Display this message")
 	print "\t-v \t"+_("Verbose mode")
-	print "\t-V \t"+_("Diplay Version information.")
+	print "\t-V \t"+_("Display version information.")
 	print "\t-p \t"+_("Start in Add Share mode with the path")
 	print "\t\t"+_("filled in with the path provided.")
 	print "\t\t"+_("Example:")
@@ -99,8 +99,8 @@ class GUI(gtk.Window):
 		self.local_btn=gtk.Button(stock=gtk.STOCK_OPEN)
 		self.local_btn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Browse"))
 		self.local_btn.connect("clicked", self.folder_sel)
-		self.public_sel= gtk.CheckButton(_("Open To the Public (Guest access)"),True)
-		self.public_sel.set_tooltip_text(_("If this is unchecked, then make sure you have a Samba user enabled and the password has been set. Otherwise, the share will be in accessible."))
+		self.public_sel= gtk.CheckButton(_("Open to the Public (Guest access)"),True)
+		self.public_sel.set_tooltip_text(_("If this is unchecked, then make sure you have a SAMBA user enabled and the password has been set. Otherwise, the share will be inaccessible."))
 
 		self.sharelist = gtk.ListStore(int,str,str,str)
 		self.sharetreeview = gtk.TreeView(self.sharelist)
@@ -249,7 +249,7 @@ class GUI(gtk.Window):
 		self.admin_btn=gtk.Button(stock=gtk.STOCK_PREFERENCES)
 		self.admin_btn.connect("clicked",self.launch_admin)
 		self.admin_btn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Samba Admin"))
-		self.admin_btn.set_tooltip_text(_("Click to launch Smb-Admin as the 'root' user for more advanced Samba Administration."))
+		self.admin_btn.set_tooltip_text(_("Click to launch smb-admin as the 'root' user for more advanced SAMBA administration."))
 		#quitbtn.get_children()[0].get_children()[0].get_children()[1].set_label("EXIT NOW")
 		about=gtk.Button(stock=gtk.STOCK_ABOUT)#"About")
 		about.connect("clicked",self.abtfunc)
@@ -331,7 +331,7 @@ class GUI(gtk.Window):
 		print ORIGINAL_SHARE,"this is the original share"
 		sharename=self.sh_entry.get_text().strip()
 		if sharename.strip()=="":
-			return self.msgbox(_("Please enter a sharename."),False)
+			return self.msgbox(_("Please enter a share name."),False)
 		elif self.local_entry.get_text().strip()=="":
 			return self.msgbox(_("Please enter a share path."),False)
 		path=self.local_entry.get_text()
@@ -382,7 +382,7 @@ class GUI(gtk.Window):
 				user_acl="Everyone:r"
 		print user_acl,"THIS ONE FIRST"
 		if "everyone" not in user_acl.lower() and public == "yes":
-			return self.msgbox(_("If you want to allow guest access, you must have a usershare_acl setting for 'Everyone'. To add one, select an access mode from the drop down menu. This will remove the current usershare_acl setting for the share since a setting for 'Everyone' will over-ride any other settings."),False)
+			return self.msgbox(_("If you want to allow guest access, you must have a usershare_acl setting for 'Everyone'. To add one, select an access mode from the drop down menu. This will remove the current usershare_acl setting for the share since a setting for 'Everyone' will override any other settings."),False)
 		command ="net usershare add \""+sharename+"\" \""+path+"\" \""+comment+"\" \""+user_acl+"\" guest_ok="+public
 		print command
 		print user_acl
@@ -435,7 +435,7 @@ class GUI(gtk.Window):
 				for x in error:
 					msg=msg+x
 				if "password restriction" in msg.lower() and len(new_pw)<5:
-					msg=msg+"\n"+_("Try a password with more than 5 Characters")
+					msg=msg+"\n"+_("Please use a password with more than 5 characters.")
 				self.msgbox(msg,False)
 		else:
 			self.msgbox(_("The passwords do not match."),False)
