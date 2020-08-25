@@ -37,7 +37,7 @@ if len(sys.argv)>1:
 	if ARG=="-v":
 		print _("verbose mode")
 	if ARG=="-V":
-		print _("Smb-Admin version: "),VERSION
+		print _("smb-admin version: "),VERSION
 		sys.exit()
 else:
 	sys.stdout=open("/dev/null", 'w')
@@ -200,7 +200,7 @@ class GUI(gtk.Window):
 		self.usershare_max_shares_hbox.pack_start(self.usershare_max_shares_entry,False,True,32)
 		self.usershare_owner_only=gtk.CheckButton(_("Owners can only share their directories"))
 		self.usershare_owner_only.set_tooltip_text(_("If set, then only the directories owned by the sharing user can be shared."))
-		usershare_about_lbl=gtk.Label(_("'Usershares' are shares that the users create, modify, and delete without being an administrator. They must have read, write, and execute access to '/var/lib/samba/usershares'. To disable 'usershares', set the max number of usershares to 0."))
+		usershare_about_lbl=gtk.Label(_("'User shares' are shares that the users create, modify, and delete without being an administrator. They must have read, write, and execute access to '/var/lib/samba/usershares'. To disable user shares, set the max number of usershares to 0."))
 		usershare_about_lbl.set_line_wrap(True)
 		self.homes_sel= gtk.CheckButton(_("Share Home Directories"),True)
 		self.homes_sel.connect("clicked", self.homes_toggle)
@@ -247,7 +247,7 @@ class GUI(gtk.Window):
 		self.local_btn.get_children()[0].get_children()[0].get_children()[1].set_label(_("Browse"))
 		self.local_btn.connect("clicked", self.folder_sel)
 		self.browseable_sel= gtk.CheckButton(_("Visible on clients"),True)
-		self.browseable_sel.set_tooltip_text(_("Check this if you want the share to be listed when clients request the share list from the server. Otherwise, it will be available, but it will not be seen."))
+		self.browseable_sel.set_tooltip_text(_("Check this if you want the share listed when clients request the share list from the server. Otherwise, it will be available, but it will not be seen."))
 		self.write_sel= gtk.CheckButton(_("Writeable"),True)
 		self.avail_sel= gtk.CheckButton(_("Enabled"),True)
 		self.follow_sel=gtk.CheckButton(_("Follow symlinks"),False)
@@ -257,7 +257,7 @@ class GUI(gtk.Window):
 		valuser_lbl=gtk.Label(_("Valid Users (optional)"))
 		self.share_info=gtk.Label("")
 		self.valuser_entry=gtk.Entry()
-		self.valuser_entry.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate user names with a comma."))
+		self.valuser_entry.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate usernames with commas."))
 		self.sharelist = gtk.ListStore(int,str,str,str,str,str,str,str)
 		self.sharetreeview = gtk.TreeView(self.sharelist)
 		
@@ -268,7 +268,7 @@ class GUI(gtk.Window):
 		self.psharetreeview = gtk.TreeView(self.psharelist)
 		
 		scroll_box=gtk.VBox()
-		self.sep_lbl=gtk.Label(_("CUPS Printers Shared by SAMBA"))
+		self.sep_lbl=gtk.Label(_("CUPS Printers shared by SAMBA"))
 		scroll_box.pack_start(self.sharetreeview,True,True)
 		self.sharescrolledwindow.add_with_viewport(scroll_box)
 
@@ -390,7 +390,7 @@ class GUI(gtk.Window):
 		self.usermodel = self.usertreeview.get_selection()
 		self.usermodel.set_mode(gtk.SELECTION_SINGLE)
 		self.userR = gtk.CellRendererText()
-		xy=self.usertreeview.insert_column_with_attributes(0, _("Current Samba Users"), self.userR, text=1)
+		xy=self.usertreeview.insert_column_with_attributes(0, _("Current SAMBA users"), self.userR, text=1)
 		self.usertreeview.insert_column_with_attributes(1, _("Status"), self.userR, text=2)
 		self.usertreeview.insert_column_with_attributes(2, _("Password Set"), self.userR, text=3)
 		xy.set_sort_column_id(1)
@@ -508,7 +508,7 @@ class GUI(gtk.Window):
 		vbox.pack_start(hsep,False,False,10)
 		vbox.pack_start(bbox,False,True,0)
 		##End Main Layout part II##
-		self.set_title(_("Smb-Admin"))
+		self.set_title(_("smb-admin"))
 		self.connect('delete_event', self.Close_program)
 #		self.add(vbox)
 		self.add(FRAME)
@@ -554,7 +554,7 @@ class GUI(gtk.Window):
 		global VERSION
 		x=gtk.AboutDialog()
 		x.set_version(VERSION)
-		x.set_name("Smb-Admin")
+		x.set_name("smb-admin")
 		y=["David Braker (LinuxNIT)\nContact: linuxnit@elivecd.org"]
 		x.set_authors(y)
 		if os.access("/usr/share/pixmaps/smb-browser.png",0)==True:
@@ -811,7 +811,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			self.pr_comment=gtk.Entry()
 			#self.pr_comment.
 			self.pr_users=gtk.Entry()
-			self.pr_users.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Comma separated values."))
+			self.pr_users.set_tooltip_text(_("If this is set, then only the users listed here can access the share. Separate usernames with commas."))
 			self.sep_lbl.hide()
 			self.psharetreeview.hide()
 			self.print_hbbox.hide()
@@ -825,7 +825,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			ok_btn.connect("clicked",self.mod_pr_cmd)
 						
 			self.pbrowseable_sel= gtk.CheckButton(_("Visible on clients"),True)
-			self.pbrowseable_sel.set_tooltip_text(_("Check this if you want the print share listed when clients request the share list from the server. Otherwise, it will be available, but it will not be seen"))
+			self.pbrowseable_sel.set_tooltip_text(_("Check this if you want the print share listed when clients request the share list from the server. Otherwise, it will be available, but it will not be seen."))
 			self.pavail_sel= gtk.CheckButton(_("Enabled"),True)
 			self.ppub_sel= gtk.CheckButton(_("Open to the Public"),False)
 			self.ppub_sel.set_tooltip_text(_("This allows guests (non Samba users) to access the print share."))
@@ -1197,7 +1197,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 		self.pub_sel.set_active(False)
 	def tab_clicked(self,widget,x,pagenum):
 		def sub_func():
-			msg=_("Smb-Admin needs to set the 'printing' and 'printcap name' to 'cups' to allow CUPS print sharing. Do you wish to do this?")
+			msg=_("smb-admin needs to set the 'printing' and 'printcap name' to 'cups' to allow CUPS print sharing. Do you wish to do this?")
 			x=gtk.MessageDialog(parent=None, flags=0, buttons=gtk.BUTTONS_YES_NO, message_format=msg)
 			x.set_position(gtk.WIN_POS_CENTER_ALWAYS)
 			x.show_all()
@@ -1251,7 +1251,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			if "passdb backend" not in config["global"]:
 				config["global"]["passdb backend"]="tdbsam"
 			elif config["global"]["passdb backend"].lower().strip() not in ["smbpasswd","tdbsam"]:
-				msg=_("Smb-Admin needs the passdb backend set to 'smbpasswd' or 'tdbsam' in order to manage users. Do you wish to change this to 'tdbsam', the default?")
+				msg=_("smb-admin needs the passdb backend set to 'smbpasswd' or 'tdbsam' in order to manage users. Do you wish to change this to 'tdbsam', the default?")
 				passdb_func(msg)
 			#gui.updateusers(None)
 			udt=UDU_thread()
@@ -1334,7 +1334,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 				self.update_printers()
 				gui.updateshare()
 	def unamepw(self,data,MSG):
-		unamelbl2=gtk.Label(_("User Name"))
+		unamelbl2=gtk.Label(_("Username"))
 		ok2=gtk.Button(stock=gtk.STOCK_OK)
 		info_label=gtk.Label(MSG)
 		info_label.set_line_wrap(True)
@@ -1418,7 +1418,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			udt.setDaemon(1)
 			udt.start()
 		if data=="add":
-			return self.unamepw(data,_("Note: To add a user to the Samba user list, the username must have a pre-existing system account. Please enter the following:"))
+			return self.unamepw(data,_("Note: To add a user to the Samba user list, the username must have an existing system account. Please enter the following:"))
 			udt=UDU_thread()
 			udt.setDaemon(1)
 			udt.start()
