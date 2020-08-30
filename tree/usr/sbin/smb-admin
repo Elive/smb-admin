@@ -1418,7 +1418,7 @@ On a Debian GNU/Linux system you can find a copy of this license in\n\
 			udt.setDaemon(1)
 			udt.start()
 		if data=="add":
-			return self.unamepw(data,_("Note: To add a user to the Samba user list, the username must have an existing system account. Please enter the following:"))
+			return self.unamepw(data,_("Note: To add a user to the Samba user list, the username must have an existing system account. Please fill in the boxes:"))
 			udt=UDU_thread()
 			udt.setDaemon(1)
 			udt.start()
